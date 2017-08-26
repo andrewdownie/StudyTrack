@@ -46,13 +46,13 @@
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
-                    <li class="active">
+                    <li>
                         <a href="index.html">Current</a>
                     </li>
                     <li>
                         <a href="#">Past</a>
                     </li>
-                    <li>
+                    <li class="active">
                         <a href="projects.html">Projects</a>
                     </li>
                     <li>
@@ -69,80 +69,38 @@
     <!-- Page Content -->
     <div class="container">
 
+        <section class="row">
+            <div class="col-md-12">
+                <button class="btn btn-success dropdown-toggle" type="button" data-toggle="dropdown"> Add Project
+            </div>
+            <div class="col-md-12">
+                <br>
+            </div>
+        </section>
 
-        <div class="row">
-            <section class="modular-item col-md-4">
+        <section class="row">
+            <table class="table table-striped">
+                <tr>
+                    <th>Project Name</th>
+                    <th>Weekly Minimum</th>
+                    <th>Weekly Ideal</th>
+                    <th>Delete</th>
+                </tr>
+                <tr>
+                    <td>Meow</td>
+                    <td>Meow</td>
+                    <td>Meow</td>
+                    <td>Meow</td>
+                </tr>
+                <tr>
+                    <td>Meow</td>
+                    <td>Meow</td>
+                    <td>Meow</td>
+                    <td>Meow</td>
+                </tr>
+            </table>
+        </section>
 
-                <div class="row">
-                    <div class="col-md-12">
-                        <h3 class="project-dropdown-prompt">Project: </h3>
-                        <div class="dropdown project-dropdown">
-                            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Dropdown Example
-                                <span class="caret"></span>
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li><a href="#">HTML</a></li>
-                                <li><a href="#">CSS</a></li>
-                                <li><a href="#">JavaScript</a></li>
-                            </ul>
-                        </div>
-
-                    </div>
-                </div>
-
-
-                <div class="row">
-                    <div class="col-md-12">
-                        <br>
-                    </div>
-                </div>
-
-
-                <div class="row">
-                    <div class="col-md-4">
-                        Hours
-                        <input class="timer-input"></input>
-                    </div> 
-                    <div class="col-md-4">
-                        Minutes
-                        <input class="timer-input"></input>
-                    </div> 
-                    <div class="col-md-4">
-                        Seconds
-                        <input class="timer-input"></input>
-                    </div> 
-                </div>
-
-                
-
-                <div class="row timer-bottom-row">           
-                    <div class="col-md-5">
-                        <button type="submit" class="btn btn-default">Start Timer</button>
-                    </div>
-                    <div class="col-md-2">
-
-                    </div>
-                    <div class="col-md-5 timer-toggle-options-container">
-                        <div class="checkbox timer-toggles">
-                            <label>
-                                <input type="checkbox"> Tick
-                            </label>
-                        </div>
-                        &nbsp;
-                        &nbsp;
-                        <div class="checkbox timer-toggles">
-                            <label>
-                                <input type="checkbox"> Ring 
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-            </section>
-            <section class="modular-item col-md-4">
-                Hi this is col 2
-            </section>
-        </div>
 
     </div>
     <!-- /.container -->
