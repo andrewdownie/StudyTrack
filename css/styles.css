@@ -1,0 +1,37 @@
+body{
+    padding-top: 70px;
+}
+
+.modular-item{
+    border-radius: 3px;
+    margin: 3px;
+    border: 1px #999 solid;
+    height: 200px;
+}
+
+.time-input{
+    width: 80%;
+}
+
+.timer-bottom-row{
+    position: absolute;
+    bottom: 8px;
+    left: 14px;
+    right: 14px;
+}
+
+.timer-toggle-options-container{
+    text-align: right;
+}
+
+.timer-toggles{
+    display: inline-block;
+}
+
+.project-dropdown{
+    display: inline-block;
+}
+
+.project-dropdown-prompt{
+    display: inline-block;
+}
