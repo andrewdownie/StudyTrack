@@ -11,7 +11,7 @@ body{
 }
 
 .timer-input{
-    width: 80%;
+    width: 70%;
 }
 
 .timer-bottom-row{
@@ -35,4 +35,18 @@ body{
 
 .project-dropdown-prompt{
     display: inline-block;
+}
+
+.timer-label{
+    min-width: 80px;
+    display: inline-block;
+}
+
+.timer-start-container{
+    position: absolute;
+    bottom: 0;
+}
+
+.timer-input-row{
+    margin-top: 10px;
 }

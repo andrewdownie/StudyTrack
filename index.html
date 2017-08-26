@@ -91,24 +91,19 @@
                 </div>
 
 
-                <div class="row">
-                    <div class="col-md-12">
-                        <br>
-                    </div>
-                </div>
 
 
-                <div class="row">
-                    <div class="col-md-4">
-                        Hours
+                <div class="row timer-input-row">
+                    <div class="col-sm-4">
+                        <span class="timer-label">Hours</span>
                         <input class="timer-input"></input>
                     </div> 
-                    <div class="col-md-4">
-                        Minutes
+                    <div class="col-sm-4">
+                        <span class="timer-label">Minutes</span>
                         <input class="timer-input"></input>
                     </div> 
-                    <div class="col-md-4">
-                        Seconds
+                    <div class="col-sm-4">
+                        <span class="timer-label">Seconds</span>
                         <input class="timer-input"></input>
                     </div> 
                 </div>
@@ -116,24 +111,24 @@
                 
 
                 <div class="row timer-bottom-row">           
-                    <div class="col-md-5">
-                        <button type="submit" class="btn btn-default">Start Timer</button>
-                    </div>
-                    <div class="col-md-2">
-
-                    </div>
-                    <div class="col-md-5 timer-toggle-options-container">
-                        <div class="checkbox timer-toggles">
-                            <label>
-                                <input type="checkbox"> Tick
-                            </label>
+                    <div class="col-sm-12">
+                        <div class="timer-start-container">
+                            <button type="submit" class="btn btn-default">Start Timer</button> <!-- why does this button ignore position absolute -->
                         </div>
-                        &nbsp;
-                        &nbsp;
-                        <div class="checkbox timer-toggles">
-                            <label>
-                                <input type="checkbox"> Ring 
-                            </label>
+
+                        <div class="timer-toggle-options-container">
+                            <div class="checkbox timer-toggles">
+                                <label>
+                                    <input type="checkbox"> Tick
+                                </label>
+                            </div>
+                            &nbsp;
+                            &nbsp;
+                            <div class="checkbox timer-toggles">
+                                <label>
+                                    <input type="checkbox"> Ring 
+                                </label>
+                            </div>
                         </div>
                     </div>
                 </div>
