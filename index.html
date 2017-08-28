@@ -168,7 +168,9 @@
             GoogleAuth = gapi.auth2.getAuthInstance();
 
             // Listen for sign-in state changes.
-            GoogleAuth.isSignedIn.listen(updateSigninStatus);
+            var updateSigninStatus = true
+            GoogleAuth.isSignedIn.listen(updateSigninStatus);//updateSigninStatus not defined...
+            console.log(updateSigninStatus)
         });
     }
 
