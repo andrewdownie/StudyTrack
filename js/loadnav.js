@@ -29,7 +29,6 @@ $(document).ready(function(){
         ///
         var urlPathPieces = window.location.pathname.split("/");
         var lastUrlPiece = urlPathPieces[urlPathPieces.length - 1];
-        console.log(lastUrlPiece);
         var activeLinkID = url_navlink_dict[lastUrlPiece];
         $("#" + activeLinkID).addClass("active");
 
@@ -45,28 +44,6 @@ $(document).ready(function(){
     });
 
 });
-
-///
-/// Setup GoogleAuth object
-///
-function initClient() {
-
-    gapi.client.init({
-        'apiKey': 'AIzaSyDPpbEG8KS9Eu3-yrx9TAlCqaCaCVNCN48',
-        'clientId': '794809467159-f7ngrrspdm6vkma7b6e898d7et7j4p1u.apps.googleusercontent.com',
-        'scope': 'https://www.googleapis.com/auth/drive.file',
-        'discoveryDocs': ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest']
-    }).then(function () {
-        GoogleAuth = gapi.auth2.getAuthInstance();
-
-        //GoogleAuth.signIn(); //Google pop up will show up with this line uncommented, but this should be handled in the functions below
-
-        // Listen for sign-in state changes.
-        GoogleAuth.isSignedIn.listen(updateSigninStatus);
-    });
-}
-
-
 
 /**
  * Store the request details. Then check to determine whether the user
@@ -94,6 +71,8 @@ function sendAuthorizedApiRequest(requestDetails) {
  * before the request executed. In that case, proceed with that API request.
  */
 function updateSigninStatus(isSignedIn) {
+    console.log("update sign in status");
+
     if (isSignedIn) {
         isAuthorized = true;
         if (currentApiRequest) {
@@ -104,3 +83,26 @@ function updateSigninStatus(isSignedIn) {
         isAuthorized = false;
     }
 }
+
+///
+/// Setup GoogleAuth object
+///
+function initClient() {
+
+    gapi.client.init({
+        'apiKey': 'AIzaSyDPpbEG8KS9Eu3-yrx9TAlCqaCaCVNCN48',
+        'clientId': '794809467159-f7ngrrspdm6vkma7b6e898d7et7j4p1u.apps.googleusercontent.com',
+        'scope': 'https://www.googleapis.com/auth/drive.file',
+        'discoveryDocs': ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest']
+    }).then(function () {
+        GoogleAuth = gapi.auth2.getAuthInstance();
+
+        //GoogleAuth.signIn(); //Google pop up will show up with this line uncommented, but this should be handled in the functions below
+        
+
+        // Listen for sign-in state changes.
+        GoogleAuth.isSignedIn.listen(updateSigninStatus);
+    });
+}
+
+
