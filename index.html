@@ -149,13 +149,15 @@
     <script src="js/bootstrap.min.js"></script>
 
     <!-- JS Imports -->
-    <script src="https://apis.google.com/js/api.js"></script>
+    <!--<script src="https://apis.google.com/js/api.js"></script>-->
+    <script src="https://apis.google.com/js/client.js"></script>
     <script src="js/index.js"></script>
 
     <script>
     var GoogleAuth; // Google Auth object.
     function initClient() {
         console.log(gapi)
+        console.log(gapi.client)
 
         gapi.client.init({
             'apiKey': 'AIzaSyDPpbEG8KS9Eu3-yrx9TAlCqaCaCVNCN48',
