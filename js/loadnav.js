@@ -119,14 +119,41 @@ function signinWrapper(){
 
         if(currentTime < expireTime){
             console.log("the user is probably logged in?")
-            var request = gapi.client.drive.about.get({'fields': 'user'});
-            // Execute the API request.
-            request.execute(function(response) {
-                console.log(response);
-            });
+            //ListFiles();
+            CreateSheet("testFileForStudyTrack");
         }
         else{
             console.log("the user cant be logged in")
         }
+    });
+}
+
+
+function ListFiles(){
+    var request = gapi.client.request({
+    'method': 'GET',
+    'path': '/drive/v3/files',
+    'params': {}
+    });
+
+    // Execute the API request.
+    request.execute(function(response) {
+        console.log(response);
+    });
+}
+
+
+function CreateSheet(name){
+    var request = gapi.client.request({
+        'method': 'POST',
+        'path': 'https://sheets.googleapis.com/v4/spreadsheets',
+        'properties': {
+            'title':'meow'
+        }
+    });
+
+    // Execute the API request.
+    request.execute(function(response) {
+        console.log(response);
     });
 }
