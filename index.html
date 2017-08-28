@@ -26,45 +26,21 @@
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
 
+
+    <!-- jQuery Version 1.11.1 -->
+    <script src="js/jquery.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.min.js"></script>
+
+    <!-- JS Imports -->
+    <script src="js/loadnav.js"></script>
+    <script src="https://apis.google.com/js/client.js"></script>
+    <script src="js/index.js"></script>
+
 </head>
 
 <body>
-
-    <!-- Navigation -->
-    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-        <div class="container">
-            <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" ref="#">StudyTrack</a>
-            </div>
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav">
-                    <li class="active">
-                        <a href="index.html">Current</a>
-                    </li>
-                    <li>
-                        <a href="#">Past</a>
-                    </li>
-                    <li>
-                        <a href="projects.html">Projects</a>
-                    </li>
-                    <li>
-                        <a href="#">Settings</a>
-                    </li>
-
-                </ul>
-            </div>
-            <!-- /.navbar-collapse -->
-        </div>
-        <!-- /.container -->
-    </nav>
 
     <!-- Page Content -->
     <div class="container">
@@ -142,40 +118,7 @@
     </div>
     <!-- /.container -->
 
-    <!-- jQuery Version 1.11.1 -->
-    <script src="js/jquery.js"></script>
 
-    <!-- Bootstrap Core JavaScript -->
-    <script src="js/bootstrap.min.js"></script>
-
-    <!-- JS Imports -->
-    <!--<script src="https://apis.google.com/js/api.js"></script>-->
-    <script src="https://apis.google.com/js/client.js"></script>
-    <script src="js/index.js"></script>
-
-    <script>
-    var GoogleAuth; // Google Auth object.
-    function initClient() {
-        console.log(gapi)
-        console.log(gapi.client)
-
-        gapi.client.init({
-            'apiKey': 'AIzaSyDPpbEG8KS9Eu3-yrx9TAlCqaCaCVNCN48',
-            'clientId': '794809467159-f7ngrrspdm6vkma7b6e898d7et7j4p1u.apps.googleusercontent.com',
-            'scope': 'https://www.googleapis.com/auth/drive.file',
-            'discoveryDocs': ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest']
-        }).then(function () {
-            GoogleAuth = gapi.auth2.getAuthInstance();
-
-            // Listen for sign-in state changes.
-            var updateSigninStatus = true
-            GoogleAuth.isSignedIn.listen(updateSigninStatus);//updateSigninStatus not defined...
-            console.log(updateSigninStatus)
-        });
-    }
-
-    gapi.load('client:auth2', initClient);
-    </script>
 
 </body>
 
