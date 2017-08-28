@@ -37,7 +37,7 @@ $(document).ready(function(){
 
 
         $("#login").click(function(){
-            GoogleAuth.signIn();
+            signinWrapper();
         });
 
 
@@ -61,28 +61,11 @@ function sendAuthorizedApiRequest(requestDetails) {
         currentApiRequest = {};
     } 
     else {
-        GoogleAuth.signIn();
+        //GoogleAuth.signIn();
+        signinWrapper();
     }
 }
 
-/**
- * Listener called when user completes auth flow. If the currentApiRequest
- * variable is set, then the user was prompted to authorize the application
- * before the request executed. In that case, proceed with that API request.
- */
-function updateSigninStatus(isSignedIn) {
-    console.log("update sign in status");
-
-    if (isSignedIn) {
-        isAuthorized = true;
-        if (currentApiRequest) {
-            sendAuthorizedApiRequest(currentApiRequest);
-        }
-    } 
-    else {
-        isAuthorized = false;
-    }
-}
 
 ///
 /// Setup GoogleAuth object
@@ -106,3 +89,44 @@ function initClient() {
 }
 
 
+/**
+ * Listener called when user completes auth flow. If the currentApiRequest
+ * variable is set, then the user was prompted to authorize the application
+ * before the request executed. In that case, proceed with that API request.
+ */
+function updateSigninStatus(isSignedIn) {
+    console.log("pls, why doesn' this get called when a user is done with the popup?")
+
+    if (isSignedIn) {
+        isAuthorized = true;
+        if (currentApiRequest) {
+            sendAuthorizedApiRequest(currentApiRequest);
+        }
+    } 
+    else {
+        isAuthorized = false;
+    }
+}
+
+
+function signinWrapper(){
+    GoogleAuth.signIn()
+    .then(function(isSignedIn){
+        console.log(isSignedIn)
+        var currentTime = (new Date).getTime();
+        var expireTime = isSignedIn["Zi"]["expires_at"]
+
+
+        if(currentTime < expireTime){
+            console.log("the user is probably logged in?")
+            var request = gapi.client.drive.about.get({'fields': 'user'});
+            // Execute the API request.
+            request.execute(function(response) {
+                console.log(response);
+            });
+        }
+        else{
+            console.log("the user cant be logged in")
+        }
+    });
+}
