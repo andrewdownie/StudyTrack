@@ -1,8 +1,8 @@
 
 var url_navlink_dict = {
-    "/": "index",
-    "/index.html": "index",
-    "/projects.html": "projects"
+    "": "index",
+    "index.html": "index",
+    "projects.html": "projects"
 }
 
 var GoogleAuth; // Google Auth object.
@@ -27,8 +27,10 @@ $(document).ready(function(){
         ///
         /// If logged in, set the current page as active in the navbar
         ///
-        var urlpath = window.location.pathname;
-        var activeLinkID = url_navlink_dict[urlpath];
+        var urlPathPieces = window.location.pathname.split("/");
+        var lastUrlPiece = urlPathPieces[urlPathPieces.length - 1];
+        console.log(lastUrlPiece);
+        var activeLinkID = url_navlink_dict[lastUrlPiece];
         $("#" + activeLinkID).addClass("active");
 
 
