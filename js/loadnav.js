@@ -147,9 +147,11 @@ function CreateSheet(name){
     var request = gapi.client.request({
         'method': 'POST',
         'path': 'https://sheets.googleapis.com/v4/spreadsheets',
-        'properties': {
-            'title':'meow'
-        }
+        'body': {
+            'properties': {
+            'title':'meow27'
+            }
+        },
     });
 
     // Execute the API request.
