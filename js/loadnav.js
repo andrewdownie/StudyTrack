@@ -5,6 +5,7 @@ var url_navlink_dict = {
     "projects.html": "projects"
 }
 
+var USER_DATA_SHEET_NAME = "StudyTrackUserData"
 var GoogleAuth; // Google Auth object.
 var isAuthorized = false;
 var currentApiRequest = false;
@@ -119,8 +120,8 @@ function signinWrapper(){
 
         if(currentTime < expireTime){
             console.log("the user is probably logged in?")
-            //ListFiles();
-            CreateSheet("testFileForStudyTrack");
+            CheckForUserDataSheet();
+            //TODO: open user data sheet....
         }
         else{
             console.log("the user cant be logged in")
@@ -129,27 +130,51 @@ function signinWrapper(){
 }
 
 
-function ListFiles(){
+function CheckForUserDataSheet(){
     var request = gapi.client.request({
-    'method': 'GET',
-    'path': '/drive/v3/files',
-    'params': {}
+        'method': 'GET',
+        'path': '/drive/v3/files',
+        'params': {}
     });
 
+
+
+    var matches = 0;
     // Execute the API request.
     request.execute(function(response) {
-        console.log(response);
+        console.log(response)
+        console.log("----")
+
+        for(var i in response.files){
+            if(response.files[i].name == USER_DATA_SHEET_NAME){
+                matches = matches + 1;
+            }
+        }
+
+        if(matches > 1){
+            console.error(matches + " sheets with name: " + USER_DATA_SHEET_NAME + " found! Uncertain what sheet will be loaded!");
+        }
+
+
+        if(matches == 0){
+            console.log("Creating new user data sheet");
+            CreateUserDataSheet(USER_DATA_SHEET_NAME);
+        }
+        else{
+            console.log("User data sheet already exists, no need to create it");
+        }
     });
+
 }
 
 
-function CreateSheet(name){
+function CreateUserDataSheet(name){
     var request = gapi.client.request({
         'method': 'POST',
         'path': 'https://sheets.googleapis.com/v4/spreadsheets',
         'body': {
             'properties': {
-            'title':'meow27'
+                'title': name
             }
         },
     });
