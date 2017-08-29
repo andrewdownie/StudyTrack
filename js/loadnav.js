@@ -215,7 +215,7 @@ function LoadUserDataSpreadSheet(){//TODO: this doesn't work yet
 function LoadUserDataWorkSheets(){
     var access_token = gapi.client.getToken().access_token;
     console.log(access_token)
-    var url = 'https://spreadsheets.google.com/feeds/worksheets/' + userdata_sheetID + '/private/full?access_token=' + access_token;
+    var url = 'https://spreadsheets.google.com/feeds/worksheets/' + userdata_sheetID + '/private/full?alt=json&access_token=' + access_token;
 
 
     // Execute the API request.
