@@ -122,7 +122,7 @@ function signinWrapper(){
 
         if(currentTime < expireTime){
             //console.log("the user is probably logged in?")
-            CheckForUserDataSheet();
+            UserData_CheckForSheet();
             //LoadUserDataSheet();
             //TODO: open user data sheet.... this needs to happen in a callback or directly in CheckForUserDataSheet()
         }
@@ -133,7 +133,7 @@ function signinWrapper(){
 }
 
 
-function CheckForUserDataSheet(){
+function UserData_CheckForSheet(){
     var request = gapi.client.request({
         'method': 'GET',
         'path': '/drive/v3/files',
@@ -163,14 +163,14 @@ function CheckForUserDataSheet(){
 
         if(matches == 0){
             console.log("Creating new user data sheet");
-            CreateUserDataSheet(USER_DATA_SHEET_NAME);
+            UserData_CreateSheet(USER_DATA_SHEET_NAME);
         }
         else{
             userdata_sheetID = lastFoundSheetID;
             console.log("User data sheet already exists, no need to create it, we are going to use sheet: " + userdata_sheetID);
 
-            console.log("Going to try to load worksheets...");
-            LoadUserDataWorkSheets();
+            console.log("Loading worksheets...");
+            UserData_ListWorkSheets();
         }
 
     });
@@ -178,7 +178,7 @@ function CheckForUserDataSheet(){
 }
 
 
-function CreateUserDataSheet(name){
+function UserData_CreateSheet(name){
     var request = gapi.client.request({
         'method': 'POST',
         'path': 'https://sheets.googleapis.com/v4/spreadsheets',
@@ -192,34 +192,69 @@ function CreateUserDataSheet(name){
     // Execute the API request.
     request.execute(function(response) {
         console.log(response);
+        UserData_ListWorkSheets();
     });
 }
 
-function LoadUserDataSpreadSheet(){//TODO: this doesn't work yet
-    var request = gapi.client.request({
-        'method': 'POST',
-        'path': 'https://spreadsheets.google.com/feeds/list/' + userdata_sheetID + '/' + "0"  + '/private/full',
-        'body': {
-            'properties': {
-                'title': name
-            }
-        },
-    });
+function UserData_LoadSpreadSheet(){//TODO: this doesn't work yet
 
-    // Execute the API request.
-    request.execute(function(response) {
-        console.log(response);
-    });
 }
 
-function LoadUserDataWorkSheets(){
+function UserData_ListWorkSheets(){
+    console.log("Loading user data work sheet...");
     var access_token = gapi.client.getToken().access_token;
-    console.log(access_token)
     var url = 'https://spreadsheets.google.com/feeds/worksheets/' + userdata_sheetID + '/private/full?alt=json&access_token=' + access_token;
 
 
+
+    var thisWeeksName = ThisWeeksWorkSheetName();
+    var thisWeeksNameFound = false;
+
     // Execute the API request.
     $.get(url, function(data){
-        console.log(data); 
+
+        for(var i in data.feed.entry){
+            if(data.feed.entry[i].title.$t == thisWeeksName){
+                thisWeeksName = true;
+            }
+        }
+
+        if(thisWeeksNameFound == false){
+            console.log("We need to create this weeks worksheet");
+            //TODO: how create this weeks worksheet
+            UserData_CreateWorkSheet(thisWeeksName);
+        }
+
     });
+}
+
+function UserData_CreateWorkSheet(thisWeeksName){
+    console.log("Inserting new worksheet into user data spread sheet...");
+    var access_token = gapi.client.getToken().access_token;
+    var url = 'https://spreadsheets.google.com/feeds/worksheets/' + userdata_sheetID + '/private/full?access_token=' + access_token;
+
+
+    // Execute the API request.
+    $.post(url, function(data){
+        console.log(data);
+    });
+}
+
+function WeekOfMonth(){
+    ///
+    /// Generate the name of this weeks sheet
+    /// Source: https://stackoverflow.com/questions/3280323/get-week-of-the-month, user: https://stackoverflow.com/users/3276277/eric
+    ///
+    var d = new Date();
+    var date = d.getDate();
+    var day = d.getDay();
+
+    var weekOfMonth = Math.ceil((date - 1 - day) / 7);
+    return weekOfMonth;
+}
+
+function ThisWeeksWorkSheetName(){
+    var d = new Date();
+
+    return "y" + d.getFullYear().toString().substr(-2) + "m" + (d.getMonth() + 1) + "w" + WeekOfMonth();
 }
