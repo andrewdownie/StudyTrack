@@ -6,7 +6,7 @@ var url_navlink_dict = {
 }
 
 var USER_DATA_SHEET_NAME = "StudyTrackUserData"
-var userDataSheetID;
+var userdata_sheetID;
 var GoogleAuth; // Google Auth object.
 var isAuthorized = false;
 var currentApiRequest = false;
@@ -78,7 +78,7 @@ function initClient() {
     gapi.client.init({
         'apiKey': 'AIzaSyDPpbEG8KS9Eu3-yrx9TAlCqaCaCVNCN48',
         'clientId': '794809467159-f7ngrrspdm6vkma7b6e898d7et7j4p1u.apps.googleusercontent.com',
-        'scope': 'https://www.googleapis.com/auth/drive.file https://spreadsheets.google.com/feeds',
+        'scope': 'https://www.googleapis.com/auth/drive.file https://docs.google.com/feeds',
         'discoveryDocs': ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest']
     }).then(function () {
         GoogleAuth = gapi.auth2.getAuthInstance();
@@ -121,13 +121,13 @@ function signinWrapper(){
 
 
         if(currentTime < expireTime){
-            console.log("the user is probably logged in?")
+            //console.log("the user is probably logged in?")
             CheckForUserDataSheet();
             //LoadUserDataSheet();
             //TODO: open user data sheet.... this needs to happen in a callback or directly in CheckForUserDataSheet()
         }
         else{
-            console.log("the user cant be logged in")
+            console.log("the user is not logged in")
         }
     });
 }
@@ -166,8 +166,8 @@ function CheckForUserDataSheet(){
             CreateUserDataSheet(USER_DATA_SHEET_NAME);
         }
         else{
-            userDataSheetID = lastFoundSheetID;
-            console.log("User data sheet already exists, no need to create it, we are going to use sheet: " + userDataSheetID);
+            userdata_sheetID = lastFoundSheetID;
+            console.log("User data sheet already exists, no need to create it, we are going to use sheet: " + userdata_sheetID);
 
             console.log("Going to try to load worksheets...");
             LoadUserDataWorkSheets();
@@ -198,7 +198,7 @@ function CreateUserDataSheet(name){
 function LoadUserDataSpreadSheet(){//TODO: this doesn't work yet
     var request = gapi.client.request({
         'method': 'POST',
-        'path': 'https://spreadsheets.google.com/feeds/list/' + userDataSheetID + '/' + "0"  + '/private/full',
+        'path': 'https://spreadsheets.google.com/feeds/list/' + userdata_sheetID + '/' + "0"  + '/private/full',
         'body': {
             'properties': {
                 'title': name
@@ -213,14 +213,13 @@ function LoadUserDataSpreadSheet(){//TODO: this doesn't work yet
 }
 
 function LoadUserDataWorkSheets(){
+    var access_token = gapi.client.getToken().access_token;
+    console.log(access_token)
+    var url = 'https://spreadsheets.google.com/feeds/worksheets/' + userdata_sheetID + '/private/full?access_token=' + access_token;
 
-    var request = gapi.client.request({
-        'method': 'GET',
-        'path': 'https://spreadsheets.google.com/feeds/worksheets/' + userDataSheetID + '/private/full',
-    });
 
     // Execute the API request.
-    request.execute(function(response) {
-        console.log(response);
+    $.get(url, function(data){
+        console.log(data); 
     });
 }
