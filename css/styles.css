@@ -3,9 +3,10 @@ body{
 }
 
 .modular-item{
-    border-radius: 3px;
+    border-radius: 4px;
     margin: 3px;
-    border: 1px #999 solid;
+    border: 1px #eee solid;
+    background-color: #f8f8f8;
     height: 200px;
     position: relative;
 }
