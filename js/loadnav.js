@@ -1,10 +1,17 @@
-
+/////                   Url mapped to id of navlinks
+/////                           used to set the active navlink
+/////
 var url_navlink_dict = {
     "": "index",
     "index.html": "index",
     "projects.html": "projects"
 }
 
+
+
+/////                   Variables
+/////
+/////
 var USER_DATA_SHEET_NAME = "StudyTrackUserData"
 var userdata_sheetID;
 var GoogleAuth; // Google Auth object.
@@ -12,6 +19,10 @@ var isAuthorized = false;
 var currentApiRequest = false;
 
 
+
+/////                   Document Ready
+/////   
+/////
 $(document).ready(function(){
 
     $.get("navbar.html", function(navbarHtml){
@@ -40,7 +51,7 @@ $(document).ready(function(){
 
 
         $("#login").click(function(){
-            signinWrapper();
+            SignInWrapper();
         });
 
 
@@ -48,31 +59,11 @@ $(document).ready(function(){
 
 });
 
-/**
- * Store the request details. Then check to determine whether the user
- * has authorized the application.
- *   - If the user has granted access, make the API request.
- *   - If the user has not granted access, initiate the sign-in flow.
- */
-function sendAuthorizedApiRequest(requestDetails) {
-    currentApiRequest = requestDetails;
-    if (isAuthorized) {
-        // Make API request
-        // gapi.client.request(requestDetails)
-
-        // Reset currentApiRequest variable.
-        currentApiRequest = {};
-    } 
-    else {
-        //GoogleAuth.signIn();
-        signinWrapper();
-    }
-}
 
 
-///
-/// Setup GoogleAuth object
-///
+/////                   Setup GoogleAuth object
+/////                           Handles OAuth and signing the user in
+/////
 function initClient() {
 
     gapi.client.init({
@@ -83,13 +74,11 @@ function initClient() {
     }).then(function () {
         GoogleAuth = gapi.auth2.getAuthInstance();
 
-        //GoogleAuth.signIn(); //Google pop up will show up with this line uncommented, but this should be handled in the functions below
-        
-
         // Listen for sign-in state changes.
         GoogleAuth.isSignedIn.listen(updateSigninStatus);
     });
 }
+
 
 
 /**
@@ -98,7 +87,7 @@ function initClient() {
  * before the request executed. In that case, proceed with that API request.
  */
 function updateSigninStatus(isSignedIn) {
-    console.log("pls, why doesn' this get called when a user is done with the popup?")
+    console.log("pls, why doesn' this get called when a user is done with the popup or ever?")
 
     if (isSignedIn) {
         isAuthorized = true;
@@ -112,7 +101,11 @@ function updateSigninStatus(isSignedIn) {
 }
 
 
-function signinWrapper(){
+
+/////                   Sign in wrapper
+/////                           Attempts to sign the user in, and then checks (in a sketchy manner) that the user successfully signed in.
+/////
+function SignInWrapper(){
     GoogleAuth.signIn()
     .then(function(isSignedIn){
         console.log(isSignedIn)
@@ -122,7 +115,7 @@ function signinWrapper(){
 
         if(currentTime < expireTime){
             //console.log("the user is probably logged in?")
-            UserData_CheckForSheet();
+            CheckForSS();
             //LoadUserDataSheet();
             //TODO: open user data sheet.... this needs to happen in a callback or directly in CheckForUserDataSheet()
         }
@@ -133,7 +126,11 @@ function signinWrapper(){
 }
 
 
-function UserData_CheckForSheet(){
+
+/////                   Check SS 
+/////                           Checks whether the user data spreadsheet already exists
+/////
+function CheckForSS(){
     var request = gapi.client.request({
         'method': 'GET',
         'path': '/drive/v3/files',
@@ -163,14 +160,14 @@ function UserData_CheckForSheet(){
 
         if(matches == 0){
             console.log("Creating new user data sheet");
-            UserData_CreateSpreadSheet(USER_DATA_SHEET_NAME);
+            CreateSS(USER_DATA_SHEET_NAME);
         }
         else{
             userdata_sheetID = lastFoundSheetID;
             console.log("User data sheet already exists, no need to create it, we are going to use sheet: " + userdata_sheetID);
 
             console.log("Loading worksheets...");
-            UserData_ListWorkSheets();
+            ListSheets();
         }
 
     });
@@ -178,7 +175,11 @@ function UserData_CheckForSheet(){
 }
 
 
-function UserData_CreateSpreadSheet(name){
+
+/////                   Create SS
+/////                           Creates the user data spreadsheet
+/////
+function CreateSS(name){
     var request = gapi.client.request({
         'method': 'POST',
         'path': 'https://sheets.googleapis.com/v4/spreadsheets',
@@ -192,20 +193,29 @@ function UserData_CreateSpreadSheet(name){
     // Execute the API request.
     request.execute(function(response) {
         console.log(response);
-        UserData_ListWorkSheets();
+        ListSheets();
     });
 }
 
-function UserData_InsertRow(){
+
+
+/////                   Insert Project Goals
+/////                           Insert a new row into columns D, E and F
+/////
+function InsertProjectGoals(project, minimumGoal, idealGoal){
     var access_token = gapi.client.getToken().access_token;
-    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + userdata_sheetID + "/values/Sheet1!A1:E1:append?valueInputOption=RAW&access_token=" + access_token;
+    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + userdata_sheetID + "/values/" + SheetName() + "!D1:F1:append?valueInputOption=RAW&access_token=" + access_token;
     console.log("the url is: " + url);
     var ajax_data = 
     `
     {
-        "values": [["meow", "2", "0.5", "60", "80"]]
+        "values": [["{project}", "{minimumGoal}", "{idealGoal}"]]
     } 
     `;
+
+    ajax_data = ajax_data.replace("{project}", project);
+    ajax_data = ajax_data.replace("{minimumGoal}", minimumGoal);
+    ajax_data = ajax_data.replace("{idealGoal}", idealGoal);
 
 
     // Execute the API request.
@@ -226,7 +236,50 @@ function UserData_InsertRow(){
     });
 }
 
-function UserData_ListWorkSheets(){
+
+
+/////                   Insert Study Time
+/////                           Inserts a new row into this weeks work sheet in columns A and B
+/////
+function InsertStudyTime(project, duration){
+    var access_token = gapi.client.getToken().access_token;
+    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + userdata_sheetID + "/values/" + SheetName() + "!A1:B1:append?valueInputOption=RAW&access_token=" + access_token;
+    console.log("the url is: " + url);
+    var ajax_data = 
+    `
+    {
+        "values": [["{project}", "{duration}"]]
+    } 
+    `;
+
+    ajax_data = ajax_data.replace("{project}", project);
+    ajax_data = ajax_data.replace("{duration}", duration);
+
+
+    // Execute the API request.
+    $.ajax({
+        contentType: 'application/json',
+        dataType: 'json',
+        data: ajax_data,
+        type: 'POST',
+        url: url, 
+        success: function(data){
+            console.log("Insert row into sheet success");
+            console.log(data);
+        },
+        error: function(data){
+            console.log("Insert row into sheet failure");
+            console.log(data);
+        },
+    });
+}
+
+
+
+/////                   List Sheets
+/////                           List all the work sheets in the user data spreadsheet
+/////
+function ListSheets(){
     console.log("Loading user data work sheet...");
     var access_token = gapi.client.getToken().access_token;
     //var url = 'https://spreadsheets.google.com/feeds/worksheets/' + userdata_sheetID + '/private/full?alt=json&access_token=' + access_token;
@@ -234,7 +287,7 @@ function UserData_ListWorkSheets(){
 
 
 
-    var thisWeeksSheet = ThisWeeksSheetName();
+    var thisWeeksSheet = SheetName();
     var thisWeeksNameFound = false;
 
     $.ajax({
@@ -256,7 +309,7 @@ function UserData_ListWorkSheets(){
 
             if(thisWeeksSheetFound == false){
                 console.log("We didnt find this weeks sheet, create it now");
-                UserData_CreateWorkSheet(thisWeeksSheet);
+                CreateSheet();
             }
             else{
                 console.log("This weeks work sheet already exists");
@@ -270,7 +323,12 @@ function UserData_ListWorkSheets(){
 
 }
 
-function UserData_CreateWorkSheet(thisWeeksName){
+
+
+/////                   Create Sheet 
+/////                           Create this weeks work sheet in the user data spreadsheet
+/////
+function CreateSheet(){
     console.log("Inserting new worksheet into user data spread sheet...");
     var access_token = gapi.client.getToken().access_token;
     //var url = 'https://spreadsheets.google.com/feeds/worksheets/' + userdata_sheetID + '/private/full?access_token=' + access_token;
@@ -281,7 +339,7 @@ function UserData_CreateWorkSheet(thisWeeksName){
             "requests": [{
                 "addSheet": {
                     "properties": {
-                      "title": "{{title}}",
+                      "title": "{title}",
                       "sheetType": "GRID",
                       "gridProperties": {
                         "rowCount": 50,
@@ -293,7 +351,7 @@ function UserData_CreateWorkSheet(thisWeeksName){
           }
         `;
 
-    ajax_data = ajax_data.replace("{{title}}", thisWeeksName);
+    ajax_data = ajax_data.replace("{title}", SheetName());
 
     console.log("attempting to create a new work sheet");
 
@@ -307,7 +365,8 @@ function UserData_CreateWorkSheet(thisWeeksName){
         success: function(data){
             console.log("Create work sheet success");
             console.log(data);
-            UserData_InsertRow();
+            InsertStudyTime("Project", "Study Duration");
+            InsertProjectGoals("Project", "Minimum Goal", "Ideal Goal");
         },
         error: function(data){
             console.log("create work sheet failed! Error info next:");
@@ -316,6 +375,11 @@ function UserData_CreateWorkSheet(thisWeeksName){
     });
 }
 
+
+
+/////                   Week Of Month
+/////                           Returns the week of the current month
+/////
 function WeekOfMonth(){
     ///
     /// Generate the name of this weeks sheet
@@ -329,9 +393,13 @@ function WeekOfMonth(){
     return weekOfMonth;
 }
 
-function ThisWeeksSheetName(){
+
+
+/////                   Sheet Name
+/////                           Generate the name that this weeks sheet will be given
+/////
+function SheetName(){
     var d = new Date();
 
-    //return "y" + d.getFullYear().toString().substr(-2) + "m" + (d.getMonth() + 1) + "w" + WeekOfMonth();
     return d.getFullYear().toString() + "-" + (d.getMonth() + 1).toString().padStart(2, '0') + "week" + WeekOfMonth();
 }
