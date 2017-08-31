@@ -207,9 +207,47 @@ function UserData_InsertRow(){
     } 
     `;
 
+    //gapi.client.sheets.spreadsheets.values.append();
+
+
+
+    //https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/append 
+
+    var params = {
+        // The ID of the spreadsheet to update.
+        spreadsheetId: '1Lc8vhoy7sv8rjviB7Xxo77fArqB--IIlYKKO1Yi3dn4',  // TODO: Update placeholder value.
+
+        // The A1 notation of a range to search for a logical table of data.
+        // Values will be appended after the last row of the table.
+        range: 'Sheet1!A1:E1',  // TODO: Update placeholder value.
+        majorDimension: "ROWS",
+
+        // How the input data should be interpreted.
+        valueInputOption: 'RAW',  // TODO: Update placeholder value.
+
+        // How the input data should be inserted.
+        insertDataOption: 'INSERT_ROWS',  // TODO: Update placeholder value.
+      };
+
+      var valueRangeBody = {
+        
+        ["Door", "$15", "2", "3/15/2016"],
+        ["Engine", "$100", "1", "3/20/2016"],
+        
+        // TODO: Add desired properties to the request body.
+      };
+
+      var request = gapi.client.sheets.spreadsheets.values.append(params, valueRangeBody);
+      request.then(function(response) {
+        // TODO: Change code below to process the `response` object:
+        console.log(response.result);
+      }, function(reason) {
+        console.error('error: ' + reason.result.error.message);
+      });
+      
 
     // Execute the API request.
-    $.ajax({
+    /*$.ajax({
         contentType: 'application/json',
         dataType: 'json',
         data: ajax_data,
@@ -223,7 +261,7 @@ function UserData_InsertRow(){
             console.log("Insert row into sheet failure");
             console.log(data);
         },
-    });
+    });*/
 }
 
 function UserData_ListWorkSheets(){
