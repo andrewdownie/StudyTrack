@@ -163,7 +163,7 @@ function UserData_CheckForSheet(){
 
         if(matches == 0){
             console.log("Creating new user data sheet");
-            UserData_CreateSheet(USER_DATA_SHEET_NAME);
+            UserData_CreateSpreadSheet(USER_DATA_SHEET_NAME);
         }
         else{
             userdata_sheetID = lastFoundSheetID;
@@ -178,7 +178,7 @@ function UserData_CheckForSheet(){
 }
 
 
-function UserData_CreateSheet(name){
+function UserData_CreateSpreadSheet(name){
     var request = gapi.client.request({
         'method': 'POST',
         'path': 'https://sheets.googleapis.com/v4/spreadsheets',
@@ -196,8 +196,34 @@ function UserData_CreateSheet(name){
     });
 }
 
-function UserData_LoadSpreadSheet(){//TODO: this doesn't work yet
+function UserData_InsertRow(){
+    var access_token = gapi.client.getToken().access_token;
+    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + userdata_sheetID + "/append/" + ThisWeeksSheetName() + "?access_token=" + access_token;
+    console.log("the url is: " + url);
+    var ajax_data = 
+    `
+    {
+        "values": [["Elizabeth", "2", "0.5", "60"]]
+    } 
+    `;
 
+
+    // Execute the API request.
+    $.ajax({
+        contentType: 'application/json',
+        dataType: 'json',
+        data: ajax_data,
+        type: 'POST',
+        url: url, 
+        success: function(data){
+            console.log("Insert row into sheet success");
+            console.log(data);
+        },
+        error: function(data){
+            console.log("Insert row into sheet failure");
+            console.log(data);
+        },
+    });
 }
 
 function UserData_ListWorkSheets(){
@@ -208,7 +234,7 @@ function UserData_ListWorkSheets(){
 
 
 
-    var thisWeeksSheet = ThisWeeksWorkSheetName();
+    var thisWeeksSheet = ThisWeeksSheetName();
     var thisWeeksNameFound = false;
 
     $.ajax({
@@ -259,7 +285,7 @@ function UserData_CreateWorkSheet(thisWeeksName){
                       "sheetType": "GRID",
                       "gridProperties": {
                         "rowCount": 50,
-                        "columnCount": 10
+                        "columnCount": 6 
                       }
                     }
                 }
@@ -275,12 +301,13 @@ function UserData_CreateWorkSheet(thisWeeksName){
     $.ajax({
         contentType: 'application/json',
         dataType: 'json',
-        url: url, 
-        type: 'POST',
         data: ajax_data,
+        type: 'POST',
+        url: url, 
         success: function(data){
             console.log("Create work sheet success");
             console.log(data);
+            UserData_InsertRow();
         },
         error: function(data){
             console.log("create work sheet failed! Error info next:");
@@ -302,7 +329,7 @@ function WeekOfMonth(){
     return weekOfMonth;
 }
 
-function ThisWeeksWorkSheetName(){
+function ThisWeeksSheetName(){
     var d = new Date();
 
     //return "y" + d.getFullYear().toString().substr(-2) + "m" + (d.getMonth() + 1) + "w" + WeekOfMonth();
