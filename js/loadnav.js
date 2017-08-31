@@ -203,15 +203,29 @@ function UserData_LoadSpreadSheet(){//TODO: this doesn't work yet
 function UserData_ListWorkSheets(){
     console.log("Loading user data work sheet...");
     var access_token = gapi.client.getToken().access_token;
-    var url = 'https://spreadsheets.google.com/feeds/worksheets/' + userdata_sheetID + '/private/full?alt=json&access_token=' + access_token;
+    //var url = 'https://spreadsheets.google.com/feeds/worksheets/' + userdata_sheetID + '/private/full?alt=json&access_token=' + access_token;
+    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + userdata_sheetID + "?includeGridData=false&access_token=" + access_token;
 
 
 
     var thisWeeksName = ThisWeeksWorkSheetName();
     var thisWeeksNameFound = false;
 
+    $.ajax({
+        url: url, 
+        type: 'GET',
+        success: function(data){
+            console.log("List work sheets success:");
+            console.log(data);
+        },
+        error: function(data){
+            console.log("List work sheets failed! Error info next:");
+            console.log(data);
+        },
+    });
+
     // Execute the API request.
-    $.get(url, function(data){
+    /*$.get(url, function(data){
 
         for(var i in data.feed.entry){
             if(data.feed.entry[i].title.$t == thisWeeksName){
@@ -225,7 +239,7 @@ function UserData_ListWorkSheets(){
             UserData_CreateWorkSheet(thisWeeksName);
         }
 
-    });
+    });*/
 }
 
 function UserData_CreateWorkSheet(thisWeeksName){

@@ -12,7 +12,7 @@ body{
 }
 
 .timer-input{
-    width: 70%;
+    width: 100%;
 }
 
 .timer-bottom-row{
@@ -26,9 +26,10 @@ body{
     text-align: right;
 }
 
-.timer-toggles{
+.timer-toggle{
     display: inline-block;
 }
+
 
 .project-dropdown{
     display: inline-block;
