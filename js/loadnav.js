@@ -9,6 +9,8 @@ var url_navlink_dict = {
 
 
 
+
+
 /////                   Variables
 /////
 /////
@@ -17,6 +19,16 @@ var userdata_sheetID;
 var GoogleAuth; // Google Auth object.
 var isAuthorized = false;
 var currentApiRequest = false;
+
+
+
+
+
+/////                   ASAP
+/////
+/////
+gapi.load('client:auth2', initClient);
+
 
 
 
@@ -47,7 +59,6 @@ $(document).ready(function(){
         $("#" + activeLinkID).addClass("active");
 
 
-        gapi.load('client:auth2', initClient);
 
 
         $("#login").click(function(){
@@ -58,6 +69,8 @@ $(document).ready(function(){
     });
 
 });
+
+
 
 
 
@@ -75,9 +88,11 @@ function initClient() {
         GoogleAuth = gapi.auth2.getAuthInstance();
 
         // Listen for sign-in state changes.
-        GoogleAuth.isSignedIn.listen(updateSigninStatus);
+        GoogleAuth.isSignedIn.listen(updateSigninStatus);//This doesn't seem to work...
     });
 }
+
+
 
 
 
@@ -99,6 +114,8 @@ function updateSigninStatus(isSignedIn) {
         isAuthorized = false;
     }
 }
+
+
 
 
 
@@ -124,6 +141,8 @@ function SignInWrapper(){
         }
     });
 }
+
+
 
 
 
@@ -176,6 +195,8 @@ function CheckForSS(){
 
 
 
+
+
 /////                   Create SS
 /////                           Creates the user data spreadsheet
 /////
@@ -196,6 +217,8 @@ function CreateSS(name){
         ListSheets();
     });
 }
+
+
 
 
 
@@ -238,6 +261,8 @@ function InsertProjectGoals(project, minimumGoal, idealGoal){
 
 
 
+
+
 /////                   Insert Study Time
 /////                           Inserts a new row into this weeks work sheet in columns A and B
 /////
@@ -273,6 +298,8 @@ function InsertStudyTime(project, duration){
         },
     });
 }
+
+
 
 
 
@@ -325,6 +352,8 @@ function ListSheets(){
 
 
 
+
+
 /////                   Create Sheet 
 /////                           Create this weeks work sheet in the user data spreadsheet
 /////
@@ -365,7 +394,7 @@ function CreateSheet(){
         success: function(data){
             console.log("Create work sheet success");
             console.log(data);
-            InsertStudyTime("Project", "Study Duration");
+            InsertStudyTime("Project", "Study Duration (H:M:S)");
             InsertProjectGoals("Project", "Minimum Goal", "Ideal Goal");
         },
         error: function(data){
@@ -374,6 +403,8 @@ function CreateSheet(){
         },
     });
 }
+
+
 
 
 
@@ -392,6 +423,8 @@ function WeekOfMonth(){
     var weekOfMonth = Math.ceil((date - 1 - day) / 7);
     return weekOfMonth;
 }
+
+
 
 
 

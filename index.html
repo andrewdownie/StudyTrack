@@ -65,19 +65,20 @@
             <section class="modular-item col-md-4">
 
                 <div class="row">
-                    <div class="col-md-12">
-                        <h3 class="project-dropdown-prompt">Project: </h3>
-                        <div class="dropdown project-dropdown">
-                            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Dropdown Example
-                                <span class="caret"></span>
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li><a href="#">HTML</a></li>
-                                <li><a href="#">CSS</a></li>
-                                <li><a href="#">JavaScript</a></li>
-                            </ul>
+                    <div class="col-xs-12 col-sm-8 col-md-12">
+                        <div class="input-group project-selection">
+                            <div class="input-group-btn">
+                                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Project
+                                </button>
+                                <div class="dropdown-menu">
+                                    <li><a class="dropdown-item project-choice" href="#">Action</a></li>
+                                    <li><a class="dropdown-item project-choice" href="#">Another action</a></li>
+                                    <li><a class="dropdown-item project-choice" href="#">Something else here</a></li>
+                                </div>
+                            </div>
+                            <input id="selected-project" type="text" class="form-control" value="Select a project..." aria-label="Text input with dropdown button" disabled>
                         </div>
-
                     </div>
                 </div>
 
@@ -87,15 +88,15 @@
                 <div class="row timer-input-row">
                     <div class="col-xs-4">
                         <span class="timer-label">Hours</span>
-                        <input class="timer-input form-control"></input>
+                        <input id="hours" type="number" min="0" value="0" class="timer-input form-control"></input>
                     </div> 
                     <div class="col-xs-4">
                         <span class="timer-label">Minutes</span>
-                        <input class="timer-input form-control"></input>
+                        <input id="minutes" type="number" min="0" value="0" class="timer-input form-control"></input>
                     </div> 
                     <div class="col-xs-4">
                         <span class="timer-label">Seconds</span>
-                        <input class="timer-input form-control"></input>
+                        <input id="seconds" type="number" min="0" value="0" class="timer-input form-control"></input>
                     </div> 
                 </div>
 
@@ -104,7 +105,7 @@
                 <div class="row timer-bottom-row">           
                     <div class="col-sm-12">
                         <div class="timer-start-container">
-                            <button type="submit" class="btn btn-default">Start Timer</button> <!-- why does this button ignore position absolute -->
+                            <button id="start-timer" type="submit" class="btn btn-default">Start Timer</button> 
                         </div>
 
                         <div class="timer-toggle-options-container">

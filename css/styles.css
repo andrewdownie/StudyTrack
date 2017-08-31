@@ -35,6 +35,11 @@ body{
     display: inline-block;
 }
 
+.project-selection{
+    margin-top: 15px;
+}
+
+
 .project-dropdown-prompt{
     display: inline-block;
 }
