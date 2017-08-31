@@ -208,7 +208,7 @@ function UserData_ListWorkSheets(){
 
 
 
-    var thisWeeksName = ThisWeeksWorkSheetName();
+    var thisWeeksSheet = ThisWeeksWorkSheetName();
     var thisWeeksNameFound = false;
 
     $.ajax({
@@ -217,6 +217,24 @@ function UserData_ListWorkSheets(){
         success: function(data){
             console.log("List work sheets success:");
             console.log(data);
+
+
+            var thisWeeksSheetFound = false;
+
+            for(var i in data.sheets){
+                if(data.sheets[i].properties.title == thisWeeksSheet)
+                {
+                    thisWeeksSheetFound = true;
+                }
+            }
+
+            if(thisWeeksSheetFound == false){
+                console.log("We didnt find this weeks sheet, create it now");
+                UserData_CreateWorkSheet(thisWeeksSheet);
+            }
+            else{
+                console.log("This weeks work sheet already exists");
+            }
         },
         error: function(data){
             console.log("List work sheets failed! Error info next:");
@@ -224,22 +242,6 @@ function UserData_ListWorkSheets(){
         },
     });
 
-    // Execute the API request.
-    /*$.get(url, function(data){
-
-        for(var i in data.feed.entry){
-            if(data.feed.entry[i].title.$t == thisWeeksName){
-                thisWeeksNameFound = true;
-            }
-        }
-
-        if(thisWeeksNameFound == false){
-            console.log("We need to create this weeks worksheet");
-            //TODO: how create this weeks worksheet
-            UserData_CreateWorkSheet(thisWeeksName);
-        }
-
-    });*/
 }
 
 function UserData_CreateWorkSheet(thisWeeksName){
@@ -303,5 +305,6 @@ function WeekOfMonth(){
 function ThisWeeksWorkSheetName(){
     var d = new Date();
 
-    return "y" + d.getFullYear().toString().substr(-2) + "m" + (d.getMonth() + 1) + "w" + WeekOfMonth();
+    //return "y" + d.getFullYear().toString().substr(-2) + "m" + (d.getMonth() + 1) + "w" + WeekOfMonth();
+    return d.getFullYear().toString() + "-" + (d.getMonth() + 1).toString().padStart(2, '0') + "week" + WeekOfMonth();
 }
