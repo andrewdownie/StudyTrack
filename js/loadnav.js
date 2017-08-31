@@ -215,7 +215,7 @@ function UserData_ListWorkSheets(){
 
         for(var i in data.feed.entry){
             if(data.feed.entry[i].title.$t == thisWeeksName){
-                thisWeeksName = true;
+                thisWeeksNameFound = true;
             }
         }
 
@@ -231,12 +231,45 @@ function UserData_ListWorkSheets(){
 function UserData_CreateWorkSheet(thisWeeksName){
     console.log("Inserting new worksheet into user data spread sheet...");
     var access_token = gapi.client.getToken().access_token;
-    var url = 'https://spreadsheets.google.com/feeds/worksheets/' + userdata_sheetID + '/private/full?access_token=' + access_token;
+    //var url = 'https://spreadsheets.google.com/feeds/worksheets/' + userdata_sheetID + '/private/full?access_token=' + access_token;
+    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + userdata_sheetID + ":batchUpdate/?access_token=" + access_token;
+    var ajax_data = 
+        `
+        {
+            "requests": [{
+                "addSheet": {
+                    "properties": {
+                      "title": "{{title}}",
+                      "sheetType": "GRID",
+                      "gridProperties": {
+                        "rowCount": 50,
+                        "columnCount": 10
+                      }
+                    }
+                }
+            }],
+          }
+        `;
 
+    ajax_data = ajax_data.replace("{{title}}", thisWeeksName);
+
+    console.log("attempting to create a new work sheet");
 
     // Execute the API request.
-    $.post(url, function(data){
-        console.log(data);
+    $.ajax({
+        contentType: 'application/json',
+        dataType: 'json',
+        url: url, 
+        type: 'POST',
+        data: ajax_data,
+        success: function(data){
+            console.log("Create work sheet success");
+            console.log(data);
+        },
+        error: function(data){
+            console.log("create work sheet failed! Error info next:");
+            console.log(data);
+        },
     });
 }
 
