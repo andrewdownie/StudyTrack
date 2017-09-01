@@ -15,6 +15,7 @@ var url_navlink_dict = {
 /////
 /////
 var USER_DATA_SHEET_NAME = "StudyTrackUserData"
+var OAUTH_TOKEN = "OAUTH_TOKEN";    // Name given to the users OAuth token cookie
 var userdata_sheetID;
 var GoogleAuth; // Google Auth object.
 var isAuthorized = false;
@@ -24,49 +25,60 @@ var currentApiRequest = false;
 
 
 
-/////                   ASAP
-/////
-/////
-gapi.load('client:auth2', initClient);
-
-
-
-
 /////                   Document Ready
 /////   
 /////
 $(document).ready(function(){
+    var OAuthCookie = getCookie(OAUTH_TOKEN);
 
-    $.get("navbar.html", function(navbarHtml){
-        $("body").prepend(navbarHtml);
-        $(".temp-navbar").remove();
+    //TODO: OAuth token is undefined.....................................................................
+    console.log("Load nav ready: " + OAuthCookie);
+    var urlPathPieces = window.location.pathname.split("/");
+    var lastUrlPiece = urlPathPieces[urlPathPieces.length - 1];
 
-        ///
-        /// TODO: check if the user is logged in
-        ///
+
+    if(OAuthCookie == "" && lastUrlPiece != "login.html"){
+        window.location.replace("login.html");
+        return;
+    }
+
+    if(OAuthCookie != ""){
+        CheckForSS();
+
+
+        $.get("navbar.html", function(navbarHtml){
+            $("body").prepend(navbarHtml);
+            $(".temp-navbar").remove();
+
+            ///
+            /// TODO: check if the user is logged in
+            ///
 
             // TODO: if they are logged in show the nav bar links, and the log out button
             // TODO: if they are not logged in, show only the login button
 
 
 
-        ///
-        /// If logged in, set the current page as active in the navbar
-        ///
-        var urlPathPieces = window.location.pathname.split("/");
-        var lastUrlPiece = urlPathPieces[urlPathPieces.length - 1];
-        var activeLinkID = url_navlink_dict[lastUrlPiece];
-        $("#" + activeLinkID).addClass("active");
+            ///
+            /// If logged in, set the current page as active in the navbar
+            ///
+            var urlPathPieces = window.location.pathname.split("/");
+            var lastUrlPiece = urlPathPieces[urlPathPieces.length - 1];
+            var activeLinkID = url_navlink_dict[lastUrlPiece];
+            $("#" + activeLinkID).addClass("active");
 
 
 
 
-        $("#login").click(function(){
-            SignInWrapper();
+            $("#logout").click(function(){
+                setCookie(OAUTH_TOKEN, "", 0);
+                window.location.replace("login.html");
+            });
+
+
         });
+    }
 
-
-    });
 
 });
 
@@ -89,6 +101,8 @@ function initClient() {
 
         // Listen for sign-in state changes.
         GoogleAuth.isSignedIn.listen(updateSigninStatus);//This doesn't seem to work...
+        
+        SignInWrapper();
     });
 }
 
@@ -125,16 +139,19 @@ function updateSigninStatus(isSignedIn) {
 function SignInWrapper(){
     GoogleAuth.signIn()
     .then(function(isSignedIn){
-        console.log(isSignedIn)
         var currentTime = (new Date).getTime();
-        var expireTime = isSignedIn["Zi"]["expires_at"]
+        var expireTime = isSignedIn.Zi.expires_at
 
 
         if(currentTime < expireTime){
+            setCookieEpoch(OAUTH_TOKEN, isSignedIn.access_token, isSignedIn.Zi.expires_at);
             //console.log("the user is probably logged in?")
-            CheckForSS();
             //LoadUserDataSheet();
             //TODO: open user data sheet.... this needs to happen in a callback or directly in CheckForUserDataSheet()
+            if(getCookie(OAUTH_TOKEN) != "" && lastUrlPiece == "login.html"){
+                window.location.replace("index.html");
+                return;
+            }
         }
         else{
             console.log("the user is not logged in")
@@ -254,6 +271,36 @@ function InsertProjectGoals(project, minimumGoal, idealGoal){
         },
         error: function(data){
             console.log("Insert row into sheet failure");
+            console.log(data);
+        },
+    });
+}
+
+
+
+
+
+/////                   ReadProjectGoals
+/////
+/////
+function ReadProjectGoals(){
+    var access_token = getCookie(OAUTH_TOKEN);
+    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + userdata_sheetID + "/values/" + SheetName() + "!D2:F30?valueInputOption=RAW&access_token=" + access_token;
+    console.log("the url is: " + url);
+
+
+    // Execute the API request.
+    $.ajax({
+        contentType: 'application/json',
+        dataType: 'json',
+        type: 'GET',
+        url: url, 
+        success: function(data){
+            console.log("Get project goals success");
+            console.log(data);
+        },
+        error: function(data){
+            console.log("Get project goals failure");
             console.log(data);
         },
     });

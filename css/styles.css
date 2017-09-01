@@ -7,7 +7,7 @@ body{
     margin: 3px;
     border: 1px #eee solid;
     background-color: #f8f8f8;
-    height: 250px;
+    height: 235px;
     position: relative;
 }
 
@@ -17,13 +17,14 @@ body{
 
 .timer-bottom-row{
     position: absolute;
-    bottom: 8px;
+    bottom: 16px;
     left: 14px;
     right: 14px;
 }
 
 .timer-toggle-options-container{
-    text-align: right;
+    position: absolute;
+    bottom: 0;
 }
 
 .timer-toggle{
@@ -36,7 +37,7 @@ body{
 }
 
 .project-selection{
-    margin-top: 15px;
+    margin-top: 18px;
 }
 
 
@@ -50,8 +51,7 @@ body{
 }
 
 .timer-start-container{
-    position: absolute;
-    bottom: 0;
+    text-align: right;
 }
 
 .timer-input-row{
