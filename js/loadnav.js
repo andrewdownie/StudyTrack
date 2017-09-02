@@ -3,8 +3,8 @@
 /////
 var url_navlink_dict = {
     "": "index",
-    "index.html": "index",
-    "projects.html": "projects"
+    "/index.html": "index",
+    "/projects.html": "projects"
 }
 
 
@@ -29,20 +29,21 @@ var currentApiRequest = false;
 /////   
 /////
 $(document).ready(function(){
+    //TODO: OAuth token is undefined.....................................................................
+    console.log("Load nav ready, auth cookie val is: " + getCookie(OAUTH_TOKEN));
+
     var OAuthCookie = getCookie(OAUTH_TOKEN);
 
-    //TODO: OAuth token is undefined.....................................................................
-    console.log("Load nav ready: " + OAuthCookie);
-    var urlPathPieces = window.location.pathname.split("/");
-    var lastUrlPiece = urlPathPieces[urlPathPieces.length - 1];
-
-
-    if(OAuthCookie == "" && lastUrlPiece != "login.html"){
+    if(OAuthCookie == "" && window.location.pathname != "/login.html"){
+        console.log("The user is not logged in, go to login.html");
         window.location.replace("login.html");
         return;
     }
 
-    if(OAuthCookie != ""){
+    
+
+    if(OAuthCookie != "" && typeof OAuthCookie != "undefined"){
+        console.log("---- check for ss");
         CheckForSS();
 
 
@@ -62,9 +63,7 @@ $(document).ready(function(){
             ///
             /// If logged in, set the current page as active in the navbar
             ///
-            var urlPathPieces = window.location.pathname.split("/");
-            var lastUrlPiece = urlPathPieces[urlPathPieces.length - 1];
-            var activeLinkID = url_navlink_dict[lastUrlPiece];
+            var activeLinkID = url_navlink_dict[window.location.pathname];
             $("#" + activeLinkID).addClass("active");
 
 
@@ -72,7 +71,7 @@ $(document).ready(function(){
 
             $("#logout").click(function(){
                 setCookie(OAUTH_TOKEN, "", 0);
-                window.location.replace("login.html");
+                window.location.replace("/login.html");
             });
 
 
@@ -148,8 +147,9 @@ function SignInWrapper(){
             //console.log("the user is probably logged in?")
             //LoadUserDataSheet();
             //TODO: open user data sheet.... this needs to happen in a callback or directly in CheckForUserDataSheet()
-            if(getCookie(OAUTH_TOKEN) != "" && lastUrlPiece == "login.html"){
+            if(getCookie(OAUTH_TOKEN) != "" && window.location.pathname == "/login.html"){
                 window.location.replace("index.html");
+                console.log("the user has signed in, go to index.html");
                 return;
             }
         }
@@ -483,3 +483,7 @@ function SheetName(){
 
     return d.getFullYear().toString() + "-" + (d.getMonth() + 1).toString().padStart(2, '0') + "week" + WeekOfMonth();
 }
+
+
+
+
