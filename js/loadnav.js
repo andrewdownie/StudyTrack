@@ -30,7 +30,7 @@ var currentApiRequest = false;
 /////
 $(document).ready(function(){
     //TODO: OAuth token is undefined.....................................................................
-    console.log("Load nav ready, auth cookie val is: " + getCookie(OAUTH_TOKEN));
+    console.log("Auth cookie val is: " + getCookie(OAUTH_TOKEN));
 
     var OAuthCookie = getCookie(OAUTH_TOKEN);
 
@@ -71,7 +71,8 @@ $(document).ready(function(){
 
             $("#logout").click(function(){
                 setCookie(OAUTH_TOKEN, "", 0);
-                window.location.replace("/login.html");
+                //window.location.replace("/login.html");
+                window.location.href = "/login.html";
             });
 
 
@@ -90,7 +91,7 @@ $(document).ready(function(){
 /////
 function initClient() {
 
-    gapi.client.init({
+        gapi.client.init({
         'apiKey': 'AIzaSyDPpbEG8KS9Eu3-yrx9TAlCqaCaCVNCN48',
         'clientId': '794809467159-f7ngrrspdm6vkma7b6e898d7et7j4p1u.apps.googleusercontent.com',
         'scope': 'https://www.googleapis.com/auth/drive.file',
@@ -142,15 +143,21 @@ function SignInWrapper(){
         var expireTime = isSignedIn.Zi.expires_at
 
 
+                //console.log(isSignedIn.Zi.access_token);
+
         if(currentTime < expireTime){
-            setCookieEpoch(OAUTH_TOKEN, isSignedIn.access_token, isSignedIn.Zi.expires_at);
+            setCookieEpoch(OAUTH_TOKEN, isSignedIn.Zi.access_token, isSignedIn.Zi.expires_at);
             //console.log("the user is probably logged in?")
             //LoadUserDataSheet();
             //TODO: open user data sheet.... this needs to happen in a callback or directly in CheckForUserDataSheet()
-            if(getCookie(OAUTH_TOKEN) != "" && window.location.pathname == "/login.html"){
+            var oauthCookie = getCookie(OAUTH_TOKEN);
+            if(oauthCookie != "" && typeof oauthCookie != 'undefined' && window.location.pathname == "/login.html"){
                 window.location.replace("index.html");
                 console.log("the user has signed in, go to index.html");
                 return;
+            }
+            else{
+                console.log("The user has failed to sign in.");
             }
         }
         else{
@@ -167,18 +174,61 @@ function SignInWrapper(){
 /////                           Checks whether the user data spreadsheet already exists
 /////
 function CheckForSS(){
-    var request = gapi.client.request({
+    /*var request = gapi.client.request({
         'method': 'GET',
         'path': '/drive/v3/files',
         'params': {}
+    });*/
+
+
+
+    var url = "https://content.googleapis.com/drive/v3/files?access_token=" + getCookie(OAUTH_TOKEN);
+    var matches = 0;
+    var lastFoundSheetID = "";
+
+    $.ajax({
+        contentType: 'application/json',
+        dataType: 'json',
+        type: 'GET',
+        url: url, 
+        success: function(data){
+            console.log("Check for SS success");
+            //console.log(data);
+            for(var i in data.files){
+                if(data.files[i].name == USER_DATA_SHEET_NAME){
+                    matches = matches + 1;
+                    lastFoundSheetID = data.files[i].id;
+                }
+            }
+
+            if(matches > 1){
+                console.error(matches + " sheets with name: " + USER_DATA_SHEET_NAME + " found! Uncertain what sheet will be loaded!");
+            }
+
+
+            if(matches == 0){
+                console.log("Creating new user data sheet");
+                CreateSS(USER_DATA_SHEET_NAME);
+            }
+            else{
+                userdata_sheetID = lastFoundSheetID;
+                console.log("User data sheet already exists, no need to create it, we are going to use sheet: " + userdata_sheetID);
+
+                console.log("Loading worksheets...");
+                ListSheets();
+            }
+        },
+        error: function(data){
+            console.log("Check for SS failure");
+            console.log(data);
+        },
     });
 
 
 
-    var matches = 0;
-    var lastFoundSheetID = "";
+
     // Execute the API request.
-    request.execute(function(response) {
+/*    request.execute(function(response) {
         console.log(response)
         console.log("----")
 
@@ -196,7 +246,7 @@ function CheckForSS(){
 
         if(matches == 0){
             console.log("Creating new user data sheet");
-            CreateSS(USER_DATA_SHEET_NAME);
+            //CreateSS(USER_DATA_SHEET_NAME);
         }
         else{
             userdata_sheetID = lastFoundSheetID;
@@ -206,7 +256,7 @@ function CheckForSS(){
             ListSheets();
         }
 
-    });
+    });*/
 
 }
 
@@ -218,7 +268,8 @@ function CheckForSS(){
 /////                           Creates the user data spreadsheet
 /////
 function CreateSS(name){
-    var request = gapi.client.request({
+
+    /*var request = gapi.client.request({
         'method': 'POST',
         'path': 'https://sheets.googleapis.com/v4/spreadsheets',
         'body': {
@@ -232,6 +283,33 @@ function CreateSS(name){
     request.execute(function(response) {
         console.log(response);
         ListSheets();
+    });*/
+    var url = "https://sheets.googleapis.com/v4/spreadsheets?access_token=" + getCookie(OAUTH_TOKEN);
+    var ajax_data =
+    `
+    {
+        "properties": {
+            "title": "{name}"
+        }
+    }
+    `;
+    ajax_data = ajax_data.replace("{name}", name);
+    console.log(ajax_data);
+
+    $.ajax({
+        contentType: 'application/json',
+        dataType: 'json',
+        data: ajax_data,
+        type: 'POST',
+        url: url, 
+        success: function(data){
+            console.log("Create spreadsheet success");
+            console.log(data);
+        },
+        error: function(data){
+            console.log("Create spreadsheet failure");
+            console.log(data);
+        },
     });
 }
 
@@ -243,8 +321,7 @@ function CreateSS(name){
 /////                           Insert a new row into columns D, E and F
 /////
 function InsertProjectGoals(project, minimumGoal, idealGoal){
-    var access_token = gapi.client.getToken().access_token;
-    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + userdata_sheetID + "/values/" + SheetName() + "!D1:F1:append?valueInputOption=RAW&access_token=" + access_token;
+    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + userdata_sheetID + "/values/" + SheetName() + "!D1:F1:append?valueInputOption=RAW&access_token=" + getCookie(OAUTH_TOKEN);
     console.log("the url is: " + url);
     var ajax_data = 
     `
@@ -314,8 +391,7 @@ function ReadProjectGoals(){
 /////                           Inserts a new row into this weeks work sheet in columns A and B
 /////
 function InsertStudyTime(project, duration){
-    var access_token = gapi.client.getToken().access_token;
-    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + userdata_sheetID + "/values/" + SheetName() + "!A1:B1:append?valueInputOption=RAW&access_token=" + access_token;
+    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + userdata_sheetID + "/values/" + SheetName() + "!A1:B1:append?valueInputOption=RAW&access_token=" + getCookie(OAUTH_TOKEN);
     console.log("the url is: " + url);
     var ajax_data = 
     `
@@ -355,9 +431,8 @@ function InsertStudyTime(project, duration){
 /////
 function ListSheets(){
     console.log("Loading user data work sheet...");
-    var access_token = gapi.client.getToken().access_token;
     //var url = 'https://spreadsheets.google.com/feeds/worksheets/' + userdata_sheetID + '/private/full?alt=json&access_token=' + access_token;
-    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + userdata_sheetID + "?includeGridData=false&access_token=" + access_token;
+    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + userdata_sheetID + "?includeGridData=false&access_token=" + getCookie(OAUTH_TOKEN);
 
 
 
@@ -406,9 +481,8 @@ function ListSheets(){
 /////
 function CreateSheet(){
     console.log("Inserting new worksheet into user data spread sheet...");
-    var access_token = gapi.client.getToken().access_token;
     //var url = 'https://spreadsheets.google.com/feeds/worksheets/' + userdata_sheetID + '/private/full?access_token=' + access_token;
-    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + userdata_sheetID + ":batchUpdate/?access_token=" + access_token;
+    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + userdata_sheetID + ":batchUpdate/?access_token=" + getCookie(OAUTH_TOKEN);
     var ajax_data = 
         `
         {
