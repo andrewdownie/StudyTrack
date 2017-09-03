@@ -3,7 +3,6 @@ $(document).ready(function(){
     /// Start Study Timer
     ///
     $("#start-timer").click(function(){
-        console.log(gapi.client.getToken().access_token);
 
         var hours = $("#hours").val();
         var minutes = $("#minutes").val();

@@ -11,6 +11,9 @@ var url_navlink_dict = {
 
 
 
+
+
+
 /////                   Variables
 /////
 /////
@@ -20,6 +23,9 @@ var userdata_sheetID;
 var GoogleAuth; // Google Auth object.
 var isAuthorized = false;
 var currentApiRequest = false;
+
+
+
 
 
 
@@ -86,6 +92,9 @@ $(document).ready(function(){
 
 
 
+
+
+
 /////                   Setup GoogleAuth object
 /////                           Handles OAuth and signing the user in
 /////
@@ -110,6 +119,9 @@ function initClient() {
 
 
 
+
+
+
 /**
  * Listener called when user completes auth flow. If the currentApiRequest
  * variable is set, then the user was prompted to authorize the application
@@ -128,6 +140,9 @@ function updateSigninStatus(isSignedIn) {
         isAuthorized = false;
     }
 }
+
+
+
 
 
 
@@ -165,6 +180,9 @@ function SignInWrapper(){
         }
     });
 }
+
+
+
 
 
 
@@ -264,6 +282,9 @@ function CheckForSS(){
 
 
 
+
+
+
 /////                   Create SS
 /////                           Creates the user data spreadsheet
 /////
@@ -317,6 +338,9 @@ function CreateSS(name){
 
 
 
+
+
+
 /////                   Insert Project Goals
 /////                           Insert a new row into columns D, E and F
 /////
@@ -357,6 +381,9 @@ function InsertProjectGoals(project, minimumGoal, idealGoal){
 
 
 
+
+
+
 /////                   ReadProjectGoals
 /////
 /////
@@ -382,6 +409,9 @@ function ReadProjectGoals(){
         },
     });
 }
+
+
+
 
 
 
@@ -421,6 +451,9 @@ function InsertStudyTime(project, duration){
         },
     });
 }
+
+
+
 
 
 
@@ -471,6 +504,9 @@ function ListSheets(){
     });
 
 }
+
+
+
 
 
 
@@ -529,6 +565,9 @@ function CreateSheet(){
 
 
 
+
+
+
 /////                   Week Of Month
 /////                           Returns the week of the current month
 /////
@@ -544,6 +583,9 @@ function WeekOfMonth(){
     var weekOfMonth = Math.ceil((date - 1 - day) / 7);
     return weekOfMonth;
 }
+
+
+
 
 
 

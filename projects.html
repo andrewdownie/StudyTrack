@@ -62,8 +62,7 @@
 
         <section class="row">
             <div class="col-md-12">
-                <button class="btn btn-success" type="button"> Add Project</button>
-                <button class="btn btn-default" type="button"> Save</button>
+                <button type="button" class="btn btn-success btn-lg" data-toggle="modal" data-target="#add-project-modal">Add Project</button>
             </div>
             <div class="col-md-12">
                 <br>
@@ -84,7 +83,52 @@
 
     </div>
     <!-- /.container -->
+ <!-- Modal -->
+    <div class="modal fade" id="add-project-modal" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Add A Project</h4>
+                </div>
 
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-xs-6 text-right modal-label">
+                            <p>Name:</p>
+                        </div>
+
+                        <div class="col-xs-6">
+                            <p><input id="project-name" type="text" placeholder="Name Required..." class="timer-input form-control"></p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-6 text-right modal-label">
+                            <p>Minimum Time (hrs):</p>
+                        </div>
+
+                        <div class="col-xs-6">
+                            <p><input id="minimum-time" type="number" min="1" max="100" value="5" class="timer-input form-control"></p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-6 text-right modal-label">
+                            <p>Ideal Time (hrs):</p>
+                        </div>
+
+                        <div class="col-xs-6">
+                            <input id="ideal-time" type="number" min="1" max="100" value="10" class="timer-input form-control"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" id="add-project">Add</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 </body>
 

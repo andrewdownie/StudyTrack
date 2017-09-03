@@ -57,3 +57,7 @@ body{
 .timer-input-row{
     margin-top: 10px;
 }
+
+.modal-label{
+    padding-top: 5px;
+}
