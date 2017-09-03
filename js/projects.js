@@ -1,13 +1,56 @@
+/////                   Document Ready
+/////
+/////
 $(document).ready(function(){
-    //ReadProjectGoals();//TODO: this currently causes a 400 when called, "invalid json payload"
+    ReadProjectGoals(ReadProjectGoalsCallback);//TODO: this currently causes a 400 when called, "invalid json payload"
 
     $("#add-project").click(function(){
+        SetupNewProject();
+    });
+
+    $("#projects-table").on("click", ".delete-project", function(){
+        var id = this.id.split("-")[1];
+        console.log(id);
+    });
+
+});
+
+
+
+
+
+
+
+
+/////                   ReadProjectGoalsCallback
+/////                           Takes the data from the read project goals call, parses said data, and adds it to the page
+/////
+function ReadProjectGoalsCallback(data){
+    var rows = data.values;
+
+    for(var i in rows){
+        AddProjectRow(data, rows[i][0], rows[i][1], rows[i][2], rows[i][3]);
+    }
+
+}
+
+
+
+
+
+
+
+
+/////                   SetupNewProject
+/////
+/////
+function SetupNewProject(){
         var projectName = $("#project-name").val();
         var minimumTime = parseInt($("#minimum-time").val());
         var idealTime = parseInt($("#ideal-time").val());
 
         if(projectName == ""){
-            alert("project name is blank");
+            alert("Project name cannot be blank");
             return;
         }
 
@@ -18,25 +61,58 @@ $(document).ready(function(){
         }
 
 
+        var projectAlreadyExists = false;
+        $(".project-name").each(function(){
+            if(projectName == $(this).text()){
+                projectAlreadyExists = true;
+            }
+        });
+
+        if(projectAlreadyExists == true){
+            alert("Project with this name already exists.");
+            return;
+        }
+
+
+        //TODO: regex check to make sure only alpha numeric characters are allowed
+        var alphaNumeric = new RegExp("^[A-Za-z.\s_-]+$");
+        var validCharactersOnly = alphaNumeric.test(projectName);
+
+        if(validCharactersOnly == false){
+            alert("Project names can only contain letters, numbers, underscores and dashes.");
+            return;
+        }
+
+
         console.log("adding project");
-        InsertProjectGoals(projectName, minimumTime, idealTime);
-    });
-});
+        InsertProjectGoals(projectName, minimumTime, idealTime, AddProjectRow);
+}
 
 
-function ConstructProjectRow(projectName, weeklyMin, weeklyGoal){
-    var base =    
+
+
+
+
+
+
+/////                   AddProjectRow
+/////
+/////
+function AddProjectRow(ajaxData, projectID, projectName, weeklyMin, weeklyGoal){
+    var rowTemplate =    
     `<tr>
-        <td>{projectName}</td>
+        <td class="project-name">{projectName}</td>
         <td>{weeklyMin}</td>
         <td>{weeklyGoal}</td>
-        <td><button class="btn btn-danger" id="{buttonID}">Delete</button></td>
+        <td><button class="btn btn-danger btn-sm delete-project" id="{buttonID}">Delete</button></td>
     </tr>`;
 
-    base = base.replace("{projectName}", projectName);
-    base = base.replace("{weeklyMin}", weeklyMin);
-    base = base.replace("{weeklyGoal}", weeklyGoal);
-    base = base.replace("{buttonID}", "delete-" + projectName);
+    row = rowTemplate;
+    row = row.replace("{projectName}", projectName);
+    row = row.replace("{weeklyMin}", weeklyMin);
+    row = row.replace("{weeklyGoal}", weeklyGoal);
+    row = row.replace("{buttonID}", "delete-" + projectID);
 
-    return base;
+    $("#projects-table").append(row);
 }
+

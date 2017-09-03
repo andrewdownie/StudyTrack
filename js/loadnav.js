@@ -1,4 +1,4 @@
-/////                   Url mapped to id of navlinks
+/////                  Url mapped to id of navlinks
 /////                           used to set the active navlink
 /////
 var url_navlink_dict = {
@@ -18,8 +18,9 @@ var url_navlink_dict = {
 /////
 /////
 var USER_DATA_SHEET_NAME = "StudyTrackUserData"
-var OAUTH_TOKEN = "OAUTH_TOKEN";    // Name given to the users OAuth token cookie
-var userdata_sheetID;
+var OAUTH_TOKEN = "OAUTH_TOKEN";            // Name given to the users OAuth token cookie
+var oauth_expireTime;
+var USERDATA_SHEET_ID = "USERDATA_SHEET_ID"; // Name given to the users data sheet id cookie
 var GoogleAuth; // Google Auth object.
 var isAuthorized = false;
 var currentApiRequest = false;
@@ -57,14 +58,6 @@ $(document).ready(function(){
             $("body").prepend(navbarHtml);
             $(".temp-navbar").remove();
 
-            ///
-            /// TODO: check if the user is logged in
-            ///
-
-            // TODO: if they are logged in show the nav bar links, and the log out button
-            // TODO: if they are not logged in, show only the login button
-
-
 
             ///
             /// If logged in, set the current page as active in the navbar
@@ -77,7 +70,6 @@ $(document).ready(function(){
 
             $("#logout").click(function(){
                 setCookie(OAUTH_TOKEN, "", 0);
-                //window.location.replace("/login.html");
                 window.location.href = "/login.html";
             });
 
@@ -155,12 +147,12 @@ function SignInWrapper(){
     GoogleAuth.signIn()
     .then(function(isSignedIn){
         var currentTime = (new Date).getTime();
-        var expireTime = isSignedIn.Zi.expires_at
+        oauth_expireTime = isSignedIn.Zi.expires_at
 
 
                 //console.log(isSignedIn.Zi.access_token);
 
-        if(currentTime < expireTime){
+        if(currentTime < oauth_expireTime){
             setCookieEpoch(OAUTH_TOKEN, isSignedIn.Zi.access_token, isSignedIn.Zi.expires_at);
             //console.log("the user is probably logged in?")
             //LoadUserDataSheet();
@@ -229,8 +221,9 @@ function CheckForSS(){
                 CreateSS(USER_DATA_SHEET_NAME);
             }
             else{
-                userdata_sheetID = lastFoundSheetID;
-                console.log("User data sheet already exists, no need to create it, we are going to use sheet: " + userdata_sheetID);
+                //userdata_sheetID = lastFoundSheetID;
+                setCookie(USERDATA_SHEET_ID, lastFoundSheetID, oauth_expireTime);
+                console.log("User data sheet already exists, no need to create it, we are going to use sheet: " + getCookie(USERDATA_SHEET_ID));
 
                 console.log("Loading worksheets...");
                 ListSheets();
@@ -245,36 +238,6 @@ function CheckForSS(){
 
 
 
-    // Execute the API request.
-/*    request.execute(function(response) {
-        console.log(response)
-        console.log("----")
-
-        for(var i in response.files){
-            if(response.files[i].name == USER_DATA_SHEET_NAME){
-                matches = matches + 1;
-                lastFoundSheetID = response.files[i].id;
-            }
-        }
-
-        if(matches > 1){
-            console.error(matches + " sheets with name: " + USER_DATA_SHEET_NAME + " found! Uncertain what sheet will be loaded!");
-        }
-
-
-        if(matches == 0){
-            console.log("Creating new user data sheet");
-            //CreateSS(USER_DATA_SHEET_NAME);
-        }
-        else{
-            userdata_sheetID = lastFoundSheetID;
-            console.log("User data sheet already exists, no need to create it, we are going to use sheet: " + userdata_sheetID);
-
-            console.log("Loading worksheets...");
-            ListSheets();
-        }
-
-    });*/
 
 }
 
@@ -289,22 +252,6 @@ function CheckForSS(){
 /////                           Creates the user data spreadsheet
 /////
 function CreateSS(name){
-
-    /*var request = gapi.client.request({
-        'method': 'POST',
-        'path': 'https://sheets.googleapis.com/v4/spreadsheets',
-        'body': {
-            'properties': {
-                'title': name
-            }
-        },
-    });
-
-    // Execute the API request.
-    request.execute(function(response) {
-        console.log(response);
-        ListSheets();
-    });*/
     var url = "https://sheets.googleapis.com/v4/spreadsheets?access_token=" + getCookie(OAUTH_TOKEN);
     var ajax_data =
     `
@@ -342,19 +289,25 @@ function CreateSS(name){
 
 
 /////                   Insert Project Goals
-/////                           Insert a new row into columns D, E and F
+/////                           Insert a new row into columns D, E, F and G
 /////
-function InsertProjectGoals(project, minimumGoal, idealGoal){
-    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + userdata_sheetID + "/values/" + SheetName() + "!D1:F1:append?valueInputOption=RAW&access_token=" + getCookie(OAUTH_TOKEN);
+function InsertProjectGoals(projectName, minimumGoal, idealGoal, callback){
+    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + getCookie(USERDATA_SHEET_ID) + "/values/" + SheetName() + "!D1:G1:append?valueInputOption=RAW&access_token=" + getCookie(OAUTH_TOKEN);
+
     console.log("the url is: " + url);
+
     var ajax_data = 
     `
     {
-        "values": [["{project}", "{minimumGoal}", "{idealGoal}"]]
+        "values": [["{projectID}", "{projectName}", "{minimumGoal}", "{idealGoal}"]]
     } 
     `;
+    
+    var projectID = (Math.random()*1e32).toString(36);
+    console.log("Project ID is: " + projectID);
 
-    ajax_data = ajax_data.replace("{project}", project);
+    ajax_data = ajax_data.replace("{projectID}", projectID);
+    ajax_data = ajax_data.replace("{projectName}", projectName);
     ajax_data = ajax_data.replace("{minimumGoal}", minimumGoal);
     ajax_data = ajax_data.replace("{idealGoal}", idealGoal);
 
@@ -366,13 +319,56 @@ function InsertProjectGoals(project, minimumGoal, idealGoal){
         data: ajax_data,
         type: 'POST',
         url: url, 
-        success: function(data){
+        success: function(ajaxData){
             console.log("Insert row into sheet success");
-            console.log(data);
+            console.log(ajaxData);
+            callback(ajaxData, projectID, projectName, minimumGoal, idealGoal);
         },
-        error: function(data){
+        error: function(ajaxData){
             console.log("Insert row into sheet failure");
-            console.log(data);
+            console.log(ajaxData);
+            callback(ajaxData, projectID, projectName, minimumGoal, idealGoal);
+        },
+    });
+}
+
+
+
+
+
+
+
+
+/////                   Insert Project Goals Header
+/////                           Insert the header row into columns D, E, F and G
+/////
+function InsertProjectGoalsHeader(){
+    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + userdata_sheetID + "/values/" + SheetName() + "!D1:G1:append?valueInputOption=RAW&access_token=" + getCookie(OAUTH_TOKEN);
+
+
+    var ajax_data = 
+    `
+    {
+        "values": [["Project ID", "Project Name", "Minimum Goal", "Ideal Goal"]]
+    } 
+    `;
+    
+
+
+    // Execute the API request.
+    $.ajax({
+        contentType: 'application/json',
+        dataType: 'json',
+        data: ajax_data,
+        type: 'POST',
+        url: url, 
+        success: function(ajaxData){
+            console.log("Insert header row into sheet success");
+            console.log(ajaxData);
+        },
+        error: function(ajaxData){
+            console.log("Insert header row into sheet failure");
+            console.log(ajaxData);
         },
     });
 }
@@ -387,9 +383,9 @@ function InsertProjectGoals(project, minimumGoal, idealGoal){
 /////                   ReadProjectGoals
 /////
 /////
-function ReadProjectGoals(){
+function ReadProjectGoals(callback){
     var access_token = getCookie(OAUTH_TOKEN);
-    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + userdata_sheetID + "/values/" + SheetName() + "!D2:F30?valueInputOption=RAW&access_token=" + access_token;
+    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + getCookie(USERDATA_SHEET_ID) + "/values/" + SheetName() + "!D2:G30?access_token=" + access_token;
     console.log("the url is: " + url);
 
 
@@ -402,10 +398,12 @@ function ReadProjectGoals(){
         success: function(data){
             console.log("Get project goals success");
             console.log(data);
+            callback(data);
         },
         error: function(data){
             console.log("Get project goals failure");
             console.log(data);
+            callback(data);
         },
     });
 }
@@ -465,7 +463,7 @@ function InsertStudyTime(project, duration){
 function ListSheets(){
     console.log("Loading user data work sheet...");
     //var url = 'https://spreadsheets.google.com/feeds/worksheets/' + userdata_sheetID + '/private/full?alt=json&access_token=' + access_token;
-    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + userdata_sheetID + "?includeGridData=false&access_token=" + getCookie(OAUTH_TOKEN);
+    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + getCookie(USERDATA_SHEET_ID) + "?includeGridData=false&access_token=" + getCookie(OAUTH_TOKEN);
 
 
 
@@ -529,7 +527,7 @@ function CreateSheet(){
                       "sheetType": "GRID",
                       "gridProperties": {
                         "rowCount": 50,
-                        "columnCount": 6 
+                        "columnCount": 7 
                       }
                     }
                 }
@@ -551,8 +549,8 @@ function CreateSheet(){
         success: function(data){
             console.log("Create work sheet success");
             console.log(data);
-            InsertStudyTime("Project", "Study Duration (H:M:S)");
-            InsertProjectGoals("Project", "Minimum Goal", "Ideal Goal");
+            InsertStudyTime("Project ID", "Study Duration (H:M:S)");
+            InsertProjectGoalsHeader();
         },
         error: function(data){
             console.log("create work sheet failed! Error info next:");
