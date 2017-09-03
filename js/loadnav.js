@@ -154,10 +154,8 @@ function SignInWrapper(){
 
         if(currentTime < oauth_expireTime){
             setCookieEpoch(OAUTH_TOKEN, isSignedIn.Zi.access_token, isSignedIn.Zi.expires_at);
-            //console.log("the user is probably logged in?")
-            //LoadUserDataSheet();
-            //TODO: open user data sheet.... this needs to happen in a callback or directly in CheckForUserDataSheet()
             var oauthCookie = getCookie(OAUTH_TOKEN);
+
             if(oauthCookie != "" && typeof oauthCookie != 'undefined' && window.location.pathname == "/login.html"){
                 window.location.replace("index.html");
                 console.log("the user has signed in, go to index.html");
@@ -184,13 +182,6 @@ function SignInWrapper(){
 /////                           Checks whether the user data spreadsheet already exists
 /////
 function CheckForSS(){
-    /*var request = gapi.client.request({
-        'method': 'GET',
-        'path': '/drive/v3/files',
-        'params': {}
-    });*/
-
-
 
     var url = "https://content.googleapis.com/drive/v3/files?access_token=" + getCookie(OAUTH_TOKEN);
     var matches = 0;
@@ -289,10 +280,10 @@ function CreateSS(name){
 
 
 /////                   Insert Project Goals
-/////                           Insert a new row into columns D, E, F and G
+/////                           Insert a new row into columns A, B, C and D
 /////
 function InsertProjectGoals(projectName, minimumGoal, idealGoal, callback){
-    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + getCookie(USERDATA_SHEET_ID) + "/values/" + SheetName() + "!D1:G1:append?valueInputOption=RAW&access_token=" + getCookie(OAUTH_TOKEN);
+    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + getCookie(USERDATA_SHEET_ID) + "/values/" + SheetName() + "!A1:D1:append?valueInputOption=RAW&access_token=" + getCookie(OAUTH_TOKEN);
 
     console.log("the url is: " + url);
 
@@ -340,10 +331,10 @@ function InsertProjectGoals(projectName, minimumGoal, idealGoal, callback){
 
 
 /////                   Insert Project Goals Header
-/////                           Insert the header row into columns D, E, F and G
+/////                           Insert the header row into columns A, B, C and D 
 /////
 function InsertProjectGoalsHeader(){
-    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + userdata_sheetID + "/values/" + SheetName() + "!D1:G1:append?valueInputOption=RAW&access_token=" + getCookie(OAUTH_TOKEN);
+    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + getCookie(USERDATA_SHEET_ID) + "/values/" + SheetName() + "!A1:D1:append?valueInputOption=RAW&access_token=" + getCookie(OAUTH_TOKEN);
 
 
     var ajax_data = 
@@ -385,7 +376,7 @@ function InsertProjectGoalsHeader(){
 /////
 function ReadProjectGoals(callback){
     var access_token = getCookie(OAUTH_TOKEN);
-    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + getCookie(USERDATA_SHEET_ID) + "/values/" + SheetName() + "!D2:G30?access_token=" + access_token;
+    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + getCookie(USERDATA_SHEET_ID) + "/values/" + SheetName() + "!A2:D30?access_token=" + access_token;
     console.log("the url is: " + url);
 
 
@@ -419,7 +410,7 @@ function ReadProjectGoals(callback){
 /////                           Inserts a new row into this weeks work sheet in columns A and B
 /////
 function InsertStudyTime(project, duration){
-    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + userdata_sheetID + "/values/" + SheetName() + "!A1:B1:append?valueInputOption=RAW&access_token=" + getCookie(OAUTH_TOKEN);
+    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + getCookie(USERDATA_SHEET_ID) + "/values/" + SheetName() + "!F1:G1:append?valueInputOption=RAW&access_token=" + getCookie(OAUTH_TOKEN);
     console.log("the url is: " + url);
     var ajax_data = 
     `
@@ -462,7 +453,6 @@ function InsertStudyTime(project, duration){
 /////
 function ListSheets(){
     console.log("Loading user data work sheet...");
-    //var url = 'https://spreadsheets.google.com/feeds/worksheets/' + userdata_sheetID + '/private/full?alt=json&access_token=' + access_token;
     var url = "https://sheets.googleapis.com/v4/spreadsheets/" + getCookie(USERDATA_SHEET_ID) + "?includeGridData=false&access_token=" + getCookie(OAUTH_TOKEN);
 
 
@@ -515,8 +505,7 @@ function ListSheets(){
 /////
 function CreateSheet(){
     console.log("Inserting new worksheet into user data spread sheet...");
-    //var url = 'https://spreadsheets.google.com/feeds/worksheets/' + userdata_sheetID + '/private/full?access_token=' + access_token;
-    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + userdata_sheetID + ":batchUpdate/?access_token=" + getCookie(OAUTH_TOKEN);
+    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + getCookie(USERDATA_SHEET_ID) + ":batchUpdate/?access_token=" + getCookie(OAUTH_TOKEN);
     var ajax_data = 
         `
         {
@@ -601,3 +590,53 @@ function SheetName(){
 
 
 
+
+
+
+
+/////                   UpdateProjectGoal
+/////
+/////
+function UpdateProjectGoal(projectID, newName, newMinTime, newIdealTime, projectRowNum, callback){
+    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + getCookie(USERDATA_SHEET_ID) + "/values/" + SheetName() + "!A" + projectRowNum + ":D" + projectRowNum + "?valueInputOption=RAW&access_token=" + getCookie(OAUTH_TOKEN);
+
+    console.log("the update url is: " + url);
+
+    var ajax_data = 
+    `
+    {
+        "values": [["{projectID}", "{projectName}", "{minimumGoal}", "{idealGoal}"]]
+    } 
+    `;
+    
+    var projectID = (Math.random()*1e32).toString(36);
+    console.log("Project ID is: " + projectID);
+
+    ajax_data = ajax_data.replace("{projectID}", projectID);
+    ajax_data = ajax_data.replace("{projectName}", newName);
+    ajax_data = ajax_data.replace("{minimumGoal}", newMinTime);
+    ajax_data = ajax_data.replace("{idealGoal}", newIdealTime);
+
+
+    // Execute the API request.
+    $.ajax({
+        contentType: 'application/json',
+        dataType: 'json',
+        data: ajax_data,
+        type: 'PUT',
+        url: url, 
+        success: function(ajaxData){
+            console.log("Insert row into sheet success");
+            console.log(ajaxData);
+            callback(ajaxData, projectID, newName, newMinTime, newIdealTime);
+        },
+        error: function(ajaxData){
+            console.log("Insert row into sheet failure");
+            console.log(ajaxData);
+            callback(ajaxData, projectID, newName, newMinTime, newIdealTime);
+        },
+    });
+
+
+
+}
