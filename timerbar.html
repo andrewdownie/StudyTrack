@@ -12,21 +12,20 @@
 -->
 
 
-<div class="timer-bar-container container">
+<div class="timer-bar-container container-flex">
     <div class="timer-bar">
-            <button id="timer-button" class="btn btn-success btn-lg pull-left">New Timer</button>
-    
-        <div class="pull-left" style="width: 40%">
-            <div class="text-left" style="width: 100%">
-                    <h1 id="timer-time">0:00:00</h1>
+        <div class="row">
+            <div class="col-xs-12">
+                <div id="timer-project-name" class="text-left"></div>
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-xs-12">
-                <div id="timer-project-name">Prljectasdfname adfafd asf asf asdf sdfasfaf </div>
-            </div>
+        <button id="set-stop-timer" class="btn btn-primary btn-lg pull-left">Set Timer</button>
+    
+        <div class="pull-left text-left" class="timer-time-wrapper">
+            <h1 id="timer-time">00:00:00</h1>
         </div>
+
 
     </div>
 </div>
@@ -34,3 +33,63 @@
 <div class="timer-bar-padding">
 </div>
 
+
+<!-- Start Timer Modal -->
+    <div class="modal fade" id="set-timer-modal" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Start Timer</h4>
+                </div>
+
+                <div class="modal-body">
+                    <div class="row">
+
+                        <div class="col-xs-12 text-right modal-label">
+                            <div class="input-group project-selection">
+                                <div class="input-group-btn">
+                                    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Project
+                                    </button>
+                                    <div class="dropdown-menu" id="dropdown-insertion">
+                                    </div>
+                                </div>
+                                <p><input id="selected-project" type="text" class="form-control timer-input" value="Select a project..." aria-label="Text input with dropdown button" disabled></p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-xs-4 text-right modal-label">
+                            <p>Hours:</p>
+                        </div>
+
+                        <div class="col-xs-8">
+                            <p><input id="hours" type="number" min="0" max="12" value="0" class="timer-input form-control"></p>
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-xs-4 text-right modal-label">
+                            <p>Minutes:</p>
+                        </div>
+
+                        <div class="col-xs-8">
+                            <input id="minutes" type="number" min="0" max="60" value="30" class="timer-input form-control"></p>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" id="start-timer">Start</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>

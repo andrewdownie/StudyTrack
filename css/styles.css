@@ -87,14 +87,24 @@ body{
     text-overflow: ellipsis;
     white-space: nowrap;
     margin-bottom: 8px;
-    margin-top: 8px;
 }
 
-#timer-button{
-    margin-right: 15px;
+#set-stop-timer{
+    margin-left: 8px;
+    margin-right: 8px;
+    margin-bottom: 8px;
 }
 
 #timer-time{
     margin: 0;
-    margin-top: 3px;
+    margin-top: 4px;
+}
+
+.timer-time-wrapper{
+    width: 35%;
+}
+
+.project-selection{
+    margin-top: 0;
+    margin-bottom: 10px;
 }
