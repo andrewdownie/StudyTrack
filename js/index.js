@@ -1,4 +1,19 @@
+/////                   Document Ready
+/////
+/////
 $(document).ready(function(){
+    ReadProjectGoals(function(data){
+        console.log(data);
+
+        for(var i in data.values){
+            var id = data.values[i][0];
+            var name = data.values[i][1];
+            $("#dropdown-insertion").append(BuildDropItem(id, name));
+
+        }
+
+    });
+
     ///
     /// Start Study Timer
     ///
@@ -36,8 +51,9 @@ $(document).ready(function(){
     ///
     /// Project Choice
     ///
-    $(".project-choice").click(function(){
+    $("#dropdown-insertion").on('click', '.project-choice', function(){
         $("#selected-project").val($(this).text());
+        //TODO: store the selected projects ID as well
     });
 
 
@@ -68,6 +84,34 @@ $(document).ready(function(){
 
 });
 
+
+
+
+
+
+
+
+/////                   BuildDropItem
+/////
+/////
+function BuildDropItem(projectID, projectName){
+    var item = '<li><a class="dropdown-item project-choice" href="#" id="{id}">{projectName}</a></li>';
+    item = item.replace("{id}", projectID);
+    item = item.replace("{projectName}", projectName);
+
+    return item;
+}
+
+
+
+
+
+
+
+
+/////                   UpdateTimerInputs
+/////
+/////
 function UpdateTimerInputs(){
     var hours = $("#hours").val();
     var minutes = $("#minutes").val();
@@ -101,3 +145,4 @@ function UpdateTimerInputs(){
 
     $("#time-remaining").text(hours + ":" + minutes + ":" + seconds);
 }
+

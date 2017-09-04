@@ -3,12 +3,12 @@ body{
 }
 
 .modular-item{
-    border-radius: 4px;
-    margin: 3px;
-    border: 1px #eee solid;
     background-color: #f8f8f8;
-    height: 235px;
+    border: 1px #eee solid;
+    border-radius: 4px;
     position: relative;
+    height: 235px;
+    margin: 3px;
 }
 
 .timer-input{
@@ -18,8 +18,8 @@ body{
 .timer-bottom-row{
     position: absolute;
     bottom: 16px;
-    left: 14px;
     right: 14px;
+    left: 14px;
 }
 
 .timer-toggle-options-container{
@@ -60,4 +60,41 @@ body{
 
 .modal-label{
     padding-top: 5px;
+}
+
+.timer-bar-container{
+    border-top: 1px solid #ccc;
+    background-color: #eee;
+    min-height: 62px;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+}
+
+.timer-bar{
+    margin-left: 8px;
+    margin-top: 8px;
+}
+
+
+.timer-bar-padding{ 
+    min-height: 111px;
+    padding: 25px;
+    width: 100%;
+}
+
+#timer-project-name{
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-bottom: 8px;
+    margin-top: 8px;
+}
+
+#timer-button{
+    margin-right: 15px;
+}
+
+#timer-time{
+    margin: 0;
+    margin-top: 3px;
 }

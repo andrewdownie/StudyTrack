@@ -54,6 +54,11 @@ $(document).ready(function(){
         var newMinTime = $("#edit-minimum-time").val();
         var newIdealTime = $("#edit-ideal-time").val();
 
+        if(ValidProjectName(newName) == false){
+            alert("Project names can only contain letters, numbers, underscores and dashes.");
+            return;
+        }
+
         var projectRow = FindProjectRowNum(editProjectID);
         UpdateProjectGoal(editProjectID, newName, newMinTime, newIdealTime, projectRow, function(){
             $("#" + editProjectID + " .project-name").text(newName);
@@ -143,10 +148,8 @@ function SetupNewProject(){
         }
 
 
-        var alphaNumeric = new RegExp("^[A-Za-z.\s0-9_-]+$");
-        var validCharactersOnly = alphaNumeric.test(projectName);
 
-        if(validCharactersOnly == false){
+        if(ValidProjectName(projectName) == false){
             alert("Project names can only contain letters, numbers, underscores and dashes.");
             return;
         }
@@ -155,6 +158,21 @@ function SetupNewProject(){
         console.log("adding project");
         InsertProjectGoals(projectName, minimumTime, idealTime, AddProjectRow);
         $("#add-project-modal").modal("hide");
+}
+
+
+
+
+
+
+
+
+/////                   ValidProjectName
+/////
+/////
+function ValidProjectName(projectName){
+        var alphaNumeric = new RegExp("^[A-Za-z0-9_-]+$");
+        return alphaNumeric.test(projectName);
 }
 
 
