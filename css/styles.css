@@ -108,3 +108,12 @@ body{
     margin-top: 0;
     margin-bottom: 10px;
 }
+
+.btn-rate-focus{
+    width: 80%;
+    display: block;
+    margin-right: auto;
+    margin-left: auto;
+    margin-bottom: 5px;
+    margin-top: 5px;
+}

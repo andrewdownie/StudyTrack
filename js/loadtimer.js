@@ -1,80 +1,90 @@
 $(document).ready(function(){
     $.get("timerbar.html", function(navbarHtml){
         $("body").append(navbarHtml);
-        TimerStatusChanged();
 
-        RunTimer();
+        ///
+        /// Start the timer right away, in case it should already be running
+        ///
+        //$("#timer-time").text(FormatTimerTime(RemainingTimeMS()));
+        RunProjectTimer();
+        DisplayTimerStatus();
 
-    ///
-    /// Project Choice
-    ///
-    $("#dropdown-insertion").on('click', '.project-choice', function(){
-        var timerStatus = getCookie("TIMER_STATUS");
+        ///
+        /// Project Choice
+        ///
+        $("#dropdown-insertion").on('click', '.project-choice', function(){
+            var timerStatus = getCookie("TIMER_STATUS");
 
-        if(timerStatus == "idle"){
-            $("#selected-project").val($(this).text());
-        
-            setCookie("TIMER_PROJECT_NAME", $(this).text());
-            setCookie("TIMER_PROJECT_ID", this.id);
-        }
-
-    });
-
-
-    ///
-    /// Set Timer
-    ///
-    $("#set-stop-timer").click(function(){
-        var timerStatus = getCookie("TIMER_STATUS");
-
-        if(timerStatus != "running"){
-            $("#set-timer-modal").modal('show');
-        }
-        else{
-            setCookie("TIMER_STATUS", "idle");
-            TimerStatusChanged();
-        }
-    });
-
-
-    ///
-    /// Start Timer
-    ///
-    $("#start-timer").click(function(){
-
-        if(ValidTimerInputs() == true){
-            //var time = $("#hours").val() + ":"  + $("#minutes").val().toString().padStart(2, "0") + ":00";
-            var endTime = moment(new Date());
-            endTime = moment(endTime).add($("#hours").val(), 'h');
-            endTime = moment(endTime).add($("#minutes").val(), 'm');
-            endTime = moment(endTime).add($("#seconds").val(), 's');
+            if(timerStatus != "running"){
+                $("#selected-project").val($(this).text());
             
-            console.log("End time: " + endTime);
+                setCookie("TIMER_PROJECT_NAME", $(this).text());
+                setCookie("TIMER_PROJECT_ID", this.id);
+            }
+
+        });
+
+        ///
+        /// Timer end: Not Focused
+        $("#not-focused").click(function(){
+            $("#timer-finished-modal").modal("hide");
+            setCookie("TIMER_STATUS", "IDLE");
+            DisplayTimerStatus();
+        });
 
 
-            $("#set-timer-modal").modal('hide');
-            setCookie("TIMER_STATUS", "running");
-            setCookie("TIMER_START_TIME", moment(new Date()));
-            setCookie("TIMER_END_TIME", endTime); //TODO: add selection duration here
-            TimerStatusChanged();
+        ///
+        /// Set Timer
+        ///
+        $("#set-stop-timer").click(function(){
+            var timerStatus = getCookie("TIMER_STATUS");
 
-            //$("#timer-time").text(time);
-            $("#timer-project-name").text(getCookie("TIMER_PROJECT_NAME"));
-        }
+            if(timerStatus != "running"){
+                $("#set-timer-modal").modal('show');
+            }
+            else{
+                setCookie("TIMER_STATUS", "idle");
+                DisplayTimerStatus();
+            }
+        });
 
-    });
+
+        ///
+        /// Start Timer
+        ///
+        $("#start-timer").click(function(){
+
+            if(ValidTimerInputs() == true){
+                //var time = $("#hours").val() + ":"  + $("#minutes").val().toString().padStart(2, "0") + ":00";
+                var endTime = moment(new Date());
+                endTime = moment(endTime).add($("#hours").val(), 'h');
+                endTime = moment(endTime).add($("#minutes").val(), 'm');
+                endTime = moment(endTime).add($("#seconds").val(), 's');
+                
+
+                $("#set-timer-modal").modal('hide');
+                setCookie("TIMER_STATUS", "running");
+                setCookie("TIMER_START_TIME", moment(new Date()));
+                setCookie("TIMER_END_TIME", endTime);
+                RunProjectTimer();
+                DisplayTimerStatus();
+
+                $("#timer-project-name").text(getCookie("TIMER_PROJECT_NAME"));
+            }
+
+        });
 
 
-    ///
-    /// Time Input Changed
-    ///
-    $("#hours, #minutes").on('keydown mousedown keyup mouseup', function(){
-        UpdateTimerInputs();
-    });
+        ///
+        /// Time Input Changed
+        ///
+        $("#hours, #minutes").on('keydown mousedown keyup mouseup', function(){
+            UpdateTimerInputs();
+        });
 
-    $("#hours, #minutes").focusout(function(){
-        TrimTimerInputs();
-    });
+        $("#hours, #minutes").focusout(function(){
+            TrimTimerInputs();
+        });
 
 
     });
@@ -87,28 +97,33 @@ $(document).ready(function(){
 
 
 
-/////                   SetStopButton
+/////                   DisplayTimerStatus 
 /////
 /////
-function TimerStatusChanged(){
+function DisplayTimerStatus(){
+    $("#timer-time").text(FormatTimerTime(RemainingTimeMS()));
     var timerStatus = getCookie("TIMER_STATUS");
 
     if(timerStatus == "running"){
-        $("#set-stop-timer").text("Stop Timer");
         $("#set-stop-timer").removeClass("btn-primary");
         $("#set-stop-timer").addClass("btn-danger");
-        $("#timer-project-name").show();
+
         $("#timer-project-name").text(getCookie("TIMER_PROJECT_NAME"));
+        $("#set-stop-timer").text("Stop Timer");
         //$("#timer-time").text(getCookie("TIMER_END_TIME"));
+
+        $("#timer-project-name").show();
         $("#timer-time").show();
 
     }
     else{
-        $("#set-stop-timer").text("Set Timer");
         $("#set-stop-timer").removeClass("btn-danger");
         $("#set-stop-timer").addClass("btn-primary");
-        $("#timer-project-name").hide();
+
+        $("#set-stop-timer").text("Set Timer");
         $("#timer-project-name").text("");
+
+        $("#timer-project-name").hide();
         $("#timer-time").hide();
 
     }
@@ -234,7 +249,7 @@ function UpdateTimerInputs(){
     minutes = minutes.toString().padStart(2, "0");
 
 
-    $("#time-remaining").text(hours + ":" + minutes + ":" + seconds);
+    $("#time-remaining").text(hours + ":" + minutes + ":00");
 }
 
 
@@ -244,10 +259,10 @@ function UpdateTimerInputs(){
 
 
 
-/////                   CurrentTimerTime
+/////                   RemainingTimerTime
 /////
 /////
-function RemainingTimerTime(){
+function RemainingTimeMS(){
     var startTime = getCookie("TIMER_START_TIME");
     var endTime = getCookie("TIMER_END_TIME");
     var currentTime = new Date();
@@ -255,9 +270,13 @@ function RemainingTimerTime(){
     var timePassed = currentTime - startTime;
     var duration = endTime - startTime
 
-    var timeRemaining = moment.duration(duration - timePassed);
+    var diff = duration - timePassed;
+    if(diff < 0){
+        diff = 0;
+    }
+    var timeRemaining = moment.duration(diff);
 
-    return timeRemaining.hours() + ":" + timeRemaining.minutes() + ":" + timeRemaining.seconds();
+    return timeRemaining;//This is a moment.duration() object
 } 
 
 
@@ -267,15 +286,99 @@ function RemainingTimerTime(){
 
 
 
-/////                   RunTimer
+/////                   FormatTimerTime
 /////
 /////
-function RunTimer(){
+function FormatTimerTime(remainingTime){
+    var hours = remainingTime.hours();
+    var minutes = remainingTime.minutes();
+    var seconds = remainingTime.seconds();
+
+    if(hours == 0){
+        minutes = minutes.toString().padStart(1, "0") + ":";
+        hours = "   ";
+    }
+    else{
+        minutes = minutes.toString().padStart(2, "0") + ":";
+        hours = hours + ":";
+    }
+
+    seconds = seconds.toString().padStart(2, "0");
+
+    var timerForattedTime = hours + minutes + seconds;
+    return timerForattedTime;
+}
+
+
+
+
+
+
+
+
+/////                   RunProjectTimer
+/////
+/////
+function RunProjectTimer(){
     setTimeout(function(){
         if(getCookie("TIMER_STATUS") == "running"){
-            $("#timer-time").text(RemainingTimerTime());
+
+            var remainingTime = RemainingTimeMS();
+
+            if(remainingTime.as('milliseconds') <= 0){
+                console.log("RunProjectTimer ended");
+                remainingTime = moment.duration(0);
+                $("#timer-finished-modal").modal('show');
+                RunEndTimer();
+            }
+
+
+            $("#timer-time").text(FormatTimerTime(remainingTime));
+
+            if(remainingTime.as('milliseconds') > 0){
+                RunProjectTimer();
+            }
         }
-        RunTimer();
+
+    }, 1000);
+}
+
+
+
+
+
+
+
+
+/////                   RunEndTimer
+/////
+/////
+function RunEndTimer(){
+    setTimeout(function(){
+        if(getCookie("TIMER_STATUS") == "running"){
+
+            var endTime = getCookie("TIMER_END_TIME");
+            var curTime = moment(new Date);
+
+            var timePassed = moment.duration(curTime - endTime);
+            var duration = moment.duration(120 * 1000);//TODO: get this from a cookie that gets set in the settings part of the site
+            var remaining = moment.duration(duration - timePassed);
+
+
+            if(remaining.as('milliseconds') <= 0){
+                $("#timer-finished-modal").modal("hide");
+                setCookie("TIMER_STATUS", "IDLE");
+                DisplayTimerStatus();
+            }
+
+
+            $("#end-timer-time").text(FormatTimerTime(remaining));
+
+
+            if(remaining.as('milliseconds') > 0){
+                RunEndTimer();
+            }
+        }
 
     }, 1000);
 }

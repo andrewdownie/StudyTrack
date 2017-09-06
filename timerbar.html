@@ -1,17 +1,4 @@
 <!-- Timer Bar -->
-
-<!--
-<nav class="navbar navbar-default navbar-fixed-bottom">
-    <div class="container" id="timer-bar">
-        <ul class="nav navbar-nav">
-            <li><p class="navbar-btn"><a href="#" class="btn btn-success">New Timer</a></p></li>
-            <li><p class="navbar-btn"><a href="#" class="btn btn-default">This is the next item to do</a></p></li>
-        </ul>
-    </div>
-</nav> 
--->
-
-
 <div class="timer-bar-container container-flex">
     <div class="timer-bar">
         <div class="row">
@@ -32,6 +19,12 @@
 
 <div class="timer-bar-padding">
 </div>
+
+
+
+
+
+
 
 
 <!-- Start Timer Modal -->
@@ -90,6 +83,41 @@
                     <button type="button" class="btn btn-success" id="start-timer">Start</button>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+<!-- Timer Finished Modal -->
+    <div class="modal fade" id="timer-finished-modal" role="dialog" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                        <h3 class="close" id="end-timer-time">0:00</h3>
+                        <h4 class="modal-title">Timer Complete</h4>
+                        <h5 class="modal-title"><small>Rate Your Focus</small></h5>
+                </div>
+
+                <div class="modal-body">
+                    <div class="row">
+                        <button type="button" class="btn btn-success btn-rate-focus" id="start-timer">Fully Focused</button>
+                    </div>
+
+                    <div class="row">
+                        <button type="button" class="btn btn-warning btn-rate-focus">Less than Fully Focused</button>
+                    </div>
+
+                    <div class="row">
+                        <button type="button" id="not-focused" class="btn btn-danger btn-rate-focus">Not Focused</button>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
