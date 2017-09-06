@@ -150,7 +150,7 @@ function SetupNewProject(){
 
 
         if(ValidProjectName(projectName) == false){
-            alert("Project names can only contain letters, numbers, underscores and dashes.");
+            alert("Project names can only contain letters, numbers, spaces, underscores and dashes.");
             return;
         }
 
@@ -171,7 +171,7 @@ function SetupNewProject(){
 /////
 /////
 function ValidProjectName(projectName){
-        var alphaNumeric = new RegExp("^[A-Za-z0-9_-]+$");
+        var alphaNumeric = new RegExp("^[A-Za-z0-9 _-]+$");
         return alphaNumeric.test(projectName);
 }
 

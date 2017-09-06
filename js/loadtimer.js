@@ -3,6 +3,7 @@ $(document).ready(function(){
         $("body").append(navbarHtml);
         TimerStatusChanged();
 
+        RunTimer();
 
     ///
     /// Project Choice
@@ -21,7 +22,7 @@ $(document).ready(function(){
 
 
     ///
-    /// Start Timer
+    /// Set Timer
     ///
     $("#set-stop-timer").click(function(){
         var timerStatus = getCookie("TIMER_STATUS");
@@ -42,14 +43,22 @@ $(document).ready(function(){
     $("#start-timer").click(function(){
 
         if(ValidTimerInputs() == true){
+            //var time = $("#hours").val() + ":"  + $("#minutes").val().toString().padStart(2, "0") + ":00";
+            var endTime = moment(new Date());
+            endTime = moment(endTime).add($("#hours").val(), 'h');
+            endTime = moment(endTime).add($("#minutes").val(), 'm');
+            endTime = moment(endTime).add($("#seconds").val(), 's');
+            
+            console.log("End time: " + endTime);
+
+
             $("#set-timer-modal").modal('hide');
             setCookie("TIMER_STATUS", "running");
-            setCookie("TIMER_TIME_STARTED", "time started here");
-            setCookie("TIMER_DURATION", "duration here");
+            setCookie("TIMER_START_TIME", moment(new Date()));
+            setCookie("TIMER_END_TIME", endTime); //TODO: add selection duration here
             TimerStatusChanged();
 
-            var time = $("#hours").val() + ":"  + $("#minutes").val() + ":00";
-            $("#timer-time").text(time);
+            //$("#timer-time").text(time);
             $("#timer-project-name").text(getCookie("TIMER_PROJECT_NAME"));
         }
 
@@ -90,6 +99,7 @@ function TimerStatusChanged(){
         $("#set-stop-timer").addClass("btn-danger");
         $("#timer-project-name").show();
         $("#timer-project-name").text(getCookie("TIMER_PROJECT_NAME"));
+        //$("#timer-time").text(getCookie("TIMER_END_TIME"));
         $("#timer-time").show();
 
     }
@@ -127,8 +137,6 @@ function ValidTimerInputs(){
         hours = hours.substr(hours.length - 1, 1);
     }
 
-    minutes = minutes.toString().padStart(2, "0");
-    var raw_duration = hours + ":" + minutes + ":00";
     var project = $("#selected-project").val();
 
     if(project == "Select a project..."){
@@ -194,7 +202,9 @@ function UpdateTimerInputs(){
     var minutes = $("#minutes").val();
 
     hours = hours.replace("-", "");
+    hours = hours.replace(".", "");
     minutes = minutes.replace("-", "");
+    minutes = minutes.replace(".", "");
 
 
 
@@ -226,3 +236,52 @@ function UpdateTimerInputs(){
 
     $("#time-remaining").text(hours + ":" + minutes + ":" + seconds);
 }
+
+
+
+
+
+
+
+
+/////                   CurrentTimerTime
+/////
+/////
+function RemainingTimerTime(){
+    var startTime = getCookie("TIMER_START_TIME");
+    var endTime = getCookie("TIMER_END_TIME");
+    var currentTime = new Date();
+
+    var timePassed = currentTime - startTime;
+    var duration = endTime - startTime
+
+    var timeRemaining = moment.duration(duration - timePassed);
+
+    return timeRemaining.hours() + ":" + timeRemaining.minutes() + ":" + timeRemaining.seconds();
+} 
+
+
+
+
+
+
+
+
+/////                   RunTimer
+/////
+/////
+function RunTimer(){
+    setTimeout(function(){
+        if(getCookie("TIMER_STATUS") == "running"){
+            $("#timer-time").text(RemainingTimerTime());
+        }
+        RunTimer();
+
+    }, 1000);
+}
+
+
+
+
+
+
