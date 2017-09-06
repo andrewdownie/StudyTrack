@@ -310,7 +310,7 @@ function RemainingTimeMS(){
     }
     var timeRemaining = moment.duration(diff);
 
-    return timeRemaining;//This is a moment.duration() object
+    return timeRemaining;
 } 
 
 

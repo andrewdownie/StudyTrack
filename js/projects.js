@@ -13,7 +13,6 @@ $(document).ready(function(){
 
 
 
-
     $("#projects-table").on("click", ".edit-project", function(){
         editProjectID = this.id.split("-")[1];
 
@@ -29,6 +28,8 @@ $(document).ready(function(){
 
 
     });
+
+
 
     $("#delete-project").click(function(){
         var curName = $("#" + editProjectID + " .project-name").text();
@@ -47,6 +48,8 @@ $(document).ready(function(){
         });
         $("#edit-project-modal").modal('hide');
     });
+
+
 
 
     $("#update-project").click(function(){

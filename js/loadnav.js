@@ -37,12 +37,10 @@ var currentApiRequest = false;
 /////
 $(document).ready(function(){
     //TODO: OAuth token is undefined.....................................................................
-    console.log("Auth cookie val is: " + getCookie(OAUTH_TOKEN));
-
     var OAuthCookie = getCookie(OAUTH_TOKEN);
 
+
     if(OAuthCookie == "" && window.location.pathname != "/login.html"){
-        console.log("The user is not logged in, go to login.html");
         window.location.replace("login.html");
         return;
     }
@@ -439,6 +437,61 @@ function InsertStudyTime(projectID, duration){
             console.log(data);
         },
     });
+}
+
+
+
+
+
+
+
+
+/////                   ReadStudyTime
+/////
+/////
+function ReadStudyTime(callback){
+    var access_token = getCookie(OAUTH_TOKEN);
+    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + getCookie(USERDATA_SHEET_ID) + "/values/" + SheetName() + "!F2:G?access_token=" + access_token;
+    console.log("the url is: " + url);
+
+
+    // Execute the API request.
+    $.ajax({
+        contentType: 'application/json',
+        dataType: 'json',
+        type: 'GET',
+        url: url, 
+        success: function(data){
+            console.log("Read study time success");
+            console.log(data);
+            CalculateStudyTotals(data);
+            callback(data);
+        },
+        error: function(data){
+            console.log("Read study time failure");
+            console.log(data);
+            callback(data);
+        },
+    });
+}
+
+
+
+
+
+
+
+
+/////                   CalculateStudyTotals
+/////
+/////
+function CalculateStudyTotals(studyRows){
+     
+
+    for(var i in studyRows.values){
+        console.log(studyRows.values[i]);
+    }
+
 }
 
 
