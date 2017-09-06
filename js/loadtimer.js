@@ -87,9 +87,43 @@ $(document).ready(function(){
         });
 
 
+        /// 
+        /// Timer End: Rate Your Focus
+        ///
+        $("#fully-focused").click(function(){
+            AddFocusTime(1); 
+        });
+        $("#less-than-fully-focused").click(function(){
+            AddFocusTime(0.25);
+        });
+
+
+
     });
 
 });
+
+
+
+
+
+
+
+
+/////                   AddFocusTime
+/////
+/////
+function AddFocusTime(focusFactor){
+    var effectiveDuration = Math.ceil(TimerDuration() * focusFactor);
+    //console.log("Effective duration is: " + effectiveDuration);
+
+    InsertStudyTime(getCookie("TIMER_PROJECT_ID"), effectiveDuration);
+
+    $("#timer-finished-modal").modal("hide");
+    setCookie("TIMER_STATUS", "IDLE");
+    DisplayTimerStatus();
+}
+
 
 
 
@@ -388,3 +422,16 @@ function RunEndTimer(){
 
 
 
+
+
+/////                   TimerDuration
+/////
+/////
+function TimerDuration(){
+    var startTime = getCookie("TIMER_START_TIME");
+    var endTime = getCookie("TIMER_END_TIME");
+
+    var duration = endTime - startTime;
+    console.log("TimerDuration() returned: " + duration);
+    return duration;
+}

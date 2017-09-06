@@ -409,17 +409,17 @@ function ReadProjectGoals(callback){
 /////                   Insert Study Time
 /////                           Inserts a new row into this weeks work sheet in columns A and B
 /////
-function InsertStudyTime(project, duration){
+function InsertStudyTime(projectID, duration){
     var url = "https://sheets.googleapis.com/v4/spreadsheets/" + getCookie(USERDATA_SHEET_ID) + "/values/" + SheetName() + "!F1:G1:append?valueInputOption=RAW&access_token=" + getCookie(OAUTH_TOKEN);
-    console.log("the url is: " + url);
+    //console.log("the url is: " + url);
     var ajax_data = 
     `
     {
-        "values": [["{project}", "{duration}"]]
+        "values": [["{projectID}", "{duration}"]]
     } 
     `;
 
-    ajax_data = ajax_data.replace("{project}", project);
+    ajax_data = ajax_data.replace("{projectID}", projectID);
     ajax_data = ajax_data.replace("{duration}", duration);
 
 
