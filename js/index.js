@@ -79,7 +79,7 @@ function CalculateProjectTotals(data){
 
         for(var i in data.values){
             if(data.values[i][0] == this.id){
-                projectArray[currentProjectNum].timeStudied += data.values[i][1];
+                projectArray[currentProjectNum].timeStudied += parseInt(data.values[i][1]);
             }
         }
 
@@ -103,7 +103,12 @@ function CalculateProjectTotals(data){
     for(var i in projectArray){
         var projectID = projectArray[i].id;
         var projectName = projectArray[i].name;
-        var timeStudied = (  (projectArray[i].timeStudied) / (60 * 60 * 1000)  ).toFixed(2);//TODO: this hides really small fractions, such as 1/60th
+        var msStudied = projectArray[i].timeStudied;//TODO: this hides really small fractions, such as 1/60th
+        //alert(msStudied)
+
+        var secStudied = msStudied / 1000;
+        var minutesStudied = secStudied / 60;
+        var hoursStudied = (minutesStudied / 60).toFixed(3);
         
 
         var minimumGoal = projectArray[i].minimumGoal;
@@ -114,8 +119,8 @@ function CalculateProjectTotals(data){
         var idealRemaining = idealGoal;
 
 
-        minRemaining = minimumGoal - timeStudied;
-        idealRemaining = idealGoal - timeStudied;
+        minRemaining = minimumGoal - hoursStudied;
+        idealRemaining = idealGoal - hoursStudied;
 
         if(minRemaining < 0){
             minRemaining = 0;
@@ -125,7 +130,7 @@ function CalculateProjectTotals(data){
             idealRemaining = 0;
         }
 
-        AddProjectRow(projectName, projectID, timeStudied, minRemaining, idealRemaining);
+        AddProjectRow(projectName, projectID, hoursStudied, minRemaining, idealRemaining);
     }
 }
 
