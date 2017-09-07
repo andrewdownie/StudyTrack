@@ -52,6 +52,7 @@ $(document).ready(function(){
                 setCookie("TIMER_STATUS", "idle");
                 DisplayTimerStatus();
             }
+             tickSound30.pause();
         });
 
 
@@ -373,6 +374,7 @@ function RunProjectTimer(){
                 remainingTime = moment.duration(0);
                 $("#timer-finished-modal").modal('show');
                 RunEndTimer();
+                tickSound30.pause();
             }
 
 
