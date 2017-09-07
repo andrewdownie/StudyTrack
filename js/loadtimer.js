@@ -1,6 +1,11 @@
+var tickSound30;
+var alarmSound;
+
 $(document).ready(function(){
     $.get("timerbar.html", function(navbarHtml){
         $("body").append(navbarHtml);
+
+        tickSound30 = new Audio("tickSound30.mp3").play();
 
 
         ///
@@ -69,6 +74,8 @@ $(document).ready(function(){
                 setCookie("TIMER_END_TIME", endTime);
                 RunProjectTimer();
                 DisplayTimerStatus();
+                tickSound30.play();
+
 
                 $("#timer-project-name").text(getCookie("TIMER_PROJECT_NAME"));
             }
@@ -373,6 +380,7 @@ function RunProjectTimer(){
 
             if(remainingTime.as('milliseconds') > 0){
                 RunProjectTimer();
+                tickSound30.play();
             }
         }
 
@@ -409,7 +417,6 @@ function RunEndTimer(){
 
 
             $("#end-timer-time").text(FormatTimerTime(remaining));
-            new Audio("tickSound.mp3").play();
 
 
             if(remaining.as('milliseconds') > 0){
