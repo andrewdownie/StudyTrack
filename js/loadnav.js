@@ -694,7 +694,7 @@ function Redirect(urlEnd){
     var pathSplit = path.split("/");
     var pathRebuilt = "";
 
-    for(var i = 0; i < pathSplit.length - 2; i++){
+    for(var i = 0; i < pathSplit.length - 1; i++){
         pathRebuilt += pathSplit[i] + "/";
     }
 
