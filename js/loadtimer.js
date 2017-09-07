@@ -5,8 +5,7 @@ $(document).ready(function(){
     $.get("timerbar.html", function(navbarHtml){
         $("body").append(navbarHtml);
 
-        tickSound30 = new Audio("tickSound30.mp3").play();
-        tickSound30.pause();
+        tickSound30 = new Audio("tickSound30.mp3");
 
 
         ///
@@ -15,7 +14,6 @@ $(document).ready(function(){
         //$("#timer-time").text(FormatTimerTime(RemainingTimeMS()));
         RunProjectTimer();
         DisplayTimerStatus();
-        tickSound30.play();
 
         ///
         /// Project Choice
@@ -77,7 +75,6 @@ $(document).ready(function(){
                 setCookie("TIMER_END_TIME", endTime);
                 RunProjectTimer();
                 DisplayTimerStatus();
-                tickSound30.play();
 
 
                 $("#timer-project-name").text(getCookie("TIMER_PROJECT_NAME"));
@@ -159,6 +156,7 @@ function DisplayTimerStatus(){
 
         $("#timer-project-name").show();
         $("#timer-time").show();
+        tickSound30.play();
 
     }
     else{
