@@ -6,6 +6,7 @@ $(document).ready(function(){
         $("body").append(navbarHtml);
 
         tickSound30 = new Audio("tickSound30.mp3").play();
+        tickSound30.pause();
 
 
         ///
@@ -14,6 +15,7 @@ $(document).ready(function(){
         //$("#timer-time").text(FormatTimerTime(RemainingTimeMS()));
         RunProjectTimer();
         DisplayTimerStatus();
+        tickSound30.play();
 
         ///
         /// Project Choice
@@ -382,7 +384,6 @@ function RunProjectTimer(){
 
             if(remainingTime.as('milliseconds') > 0){
                 RunProjectTimer();
-                tickSound30.play();
             }
         }
 
