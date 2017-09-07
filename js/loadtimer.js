@@ -6,6 +6,7 @@ $(document).ready(function(){
         $("body").append(navbarHtml);
 
         tickSound30 = new Audio("tickSound30.mp3");
+        alarmSound = new Audio("alarmSound.mp3");
 
 
         ///
@@ -168,7 +169,7 @@ function DisplayTimerStatus(){
 
         $("#timer-project-name").hide();
         $("#timer-time").hide();
-
+        tickSound30.pause();
     }
 }
 
@@ -369,7 +370,6 @@ function RunProjectTimer(){
             var remainingTime = RemainingTimeMS();
 
             if(remainingTime.as('milliseconds') <= 0){
-                new Audio("alarmSound.mp3").play();
                 console.log("RunProjectTimer ended");
                 remainingTime = moment.duration(0);
                 $("#timer-finished-modal").modal('show');
