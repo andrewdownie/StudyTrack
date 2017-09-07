@@ -2,6 +2,7 @@ $(document).ready(function(){
     $.get("timerbar.html", function(navbarHtml){
         $("body").append(navbarHtml);
 
+
         ///
         /// Start the timer right away, in case it should already be running
         ///
@@ -360,6 +361,7 @@ function RunProjectTimer(){
             var remainingTime = RemainingTimeMS();
 
             if(remainingTime.as('milliseconds') <= 0){
+                new Audio("alarmSound.mp3").play();
                 console.log("RunProjectTimer ended");
                 remainingTime = moment.duration(0);
                 $("#timer-finished-modal").modal('show');
@@ -407,6 +409,7 @@ function RunEndTimer(){
 
 
             $("#end-timer-time").text(FormatTimerTime(remaining));
+            new Audio("tickSound.mp3").play();
 
 
             if(remaining.as('milliseconds') > 0){
