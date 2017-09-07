@@ -3,8 +3,8 @@
 /////
 var url_navlink_dict = {
     "": "index",
-    "/index.html": "index",
-    "/projects.html": "projects"
+    "index.html": "index",
+    "projects.html": "projects"
 }
 
 
@@ -40,8 +40,9 @@ $(document).ready(function(){
     var OAuthCookie = getCookie(OAUTH_TOKEN);
 
 
-    if(OAuthCookie == "" && window.location.pathname != "/login.html"){
-        window.location.replace("login.html");
+    if(OAuthCookie == "" && !CheckPath("login.html")){
+        //window.location.replace("login.html");
+        Redirect("login.html");
         return;
     }
 
@@ -60,15 +61,17 @@ $(document).ready(function(){
             ///
             /// If logged in, set the current page as active in the navbar
             ///
-            var activeLinkID = url_navlink_dict[window.location.pathname];
-            $("#" + activeLinkID).addClass("active");
+            //var activeLinkID = url_navlink_dict[window.location.pathname];
+            //$("#" + activeLinkID).addClass("active");
+            SetActiveLink();
 
 
 
 
             $("#logout").click(function(){
                 setCookie(OAUTH_TOKEN, "", 0);
-                window.location.href = "/login.html";
+                //window.location.href = "/login.html";
+                Redirect("login.html");
             });
 
 
@@ -77,7 +80,6 @@ $(document).ready(function(){
 
 
 });
-
 
 
 
@@ -154,8 +156,10 @@ function SignInWrapper(){
             setCookieEpoch(OAUTH_TOKEN, isSignedIn.Zi.access_token, isSignedIn.Zi.expires_at);
             var oauthCookie = getCookie(OAUTH_TOKEN);
 
-            if(oauthCookie != "" && typeof oauthCookie != 'undefined' && window.location.pathname == "/login.html"){
-                window.location.replace("index.html");
+            //if(oauthCookie != "" && typeof oauthCookie != 'undefined' && window.location.pathname == "/login.html"){
+            if(oauthCookie != "" && typeof oauthCookie != 'undefined' && CheckPath("login.html")){
+                //window.location.replace("index.html");
+                Redirect("index.html");
                 console.log("the user has signed in, go to index.html");
                 return;
             }
@@ -672,4 +676,70 @@ function UpdateProjectGoal(projectID, newName, newMinTime, newIdealTime, project
 
 
 
+}
+
+
+
+
+
+
+
+
+/////                   Redirect
+/////                           : Redirects by changing the last part of the current url
+/////
+function Redirect(urlEnd){
+    console.log("redirect pls");
+    var path = window.location.pathname;
+    var pathSplit = path.split("/");
+    var pathRebuilt = "";
+
+    for(var i = 0; i < pathSplit.length - 2; i++){
+        pathRebuilt += pathSplit[i] + "/";
+    }
+
+    pathRebuilt += urlEnd;
+
+    window.location.href = pathRebuilt;
+}
+
+
+
+
+
+
+
+
+/////                   CheckPage
+/////                           : gets the last part of the current url, and checks the passed in string to see if they are the same.
+/////
+function CheckPath(checkUrl){
+    var path = window.location.pathname;
+    var pathSplit = path.split("/");
+    var urlEnd = pathSplit[pathSplit.length - 1];
+
+    if(urlEnd == checkUrl){
+        return true;
+    }
+
+    return false;
+}
+
+
+
+
+
+
+
+
+/////                   Set Active Link
+/////   
+/////
+function SetActiveLink(){
+    var path = window.location.pathname;
+    var pathSplit = path.split("/");
+    var urlEnd = pathSplit[pathSplit.length - 1];
+
+    var activeLinkID = url_navlink_dict[urlEnd];
+    $("#" + activeLinkID).addClass("active");
 }
