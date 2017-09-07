@@ -374,7 +374,7 @@ function InsertProjectGoalsHeader(){
 /////
 function ReadProjectGoals(callback){
     var access_token = getCookie(OAUTH_TOKEN);
-    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + getCookie(USERDATA_SHEET_ID) + "/values/" + SheetName() + "!A2:D30?access_token=" + access_token;
+    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + getCookie(USERDATA_SHEET_ID) + "/values/" + SheetName() + "!A2:D?access_token=" + access_token;
     console.log("the url is: " + url);
 
 
@@ -464,7 +464,6 @@ function ReadStudyTime(callback){
         success: function(data){
             console.log("Read study time success");
             console.log(data);
-            CalculateStudyTotals(data);
             callback(data);
         },
         error: function(data){
@@ -473,25 +472,6 @@ function ReadStudyTime(callback){
             callback(data);
         },
     });
-}
-
-
-
-
-
-
-
-
-/////                   CalculateStudyTotals
-/////
-/////
-function CalculateStudyTotals(studyRows){
-     
-
-    for(var i in studyRows.values){
-        console.log(studyRows.values[i]);
-    }
-
 }
 
 

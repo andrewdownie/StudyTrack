@@ -8,11 +8,13 @@ $(document).ready(function(){
         for(var i in data.values){
             var id = data.values[i][0];
             var name = data.values[i][1];
-            $("#dropdown-insertion").append(BuildDropItem(id, name));
+            var minimumGoal = data.values[i][2];
+            var idealGoal = data.values[i][3];
+            $("#dropdown-insertion").append(BuildDropItem(id, name, minimumGoal, idealGoal));
 
         }
 
-        ReadStudyTime(AddProjectRows);
+        ReadStudyTime(CalculateProjectTotals);
 
     });
 
@@ -33,10 +35,12 @@ $(document).ready(function(){
 /////                   BuildDropItem
 /////
 /////
-function BuildDropItem(projectID, projectName){
-    var item = '<li><a class="dropdown-item project-choice" href="#" id="{id}">{projectName}</a></li>';
+function BuildDropItem(projectID, projectName, minimumGoal, idealGoal){
+    var item = '<li><a class="dropdown-item project-choice" href="#" id="{id}" minimumGoal="{minimumGoal}" idealGoal="{idealGoal}">{projectName}</a></li>';
     item = item.replace("{id}", projectID);
     item = item.replace("{projectName}", projectName);
+    item = item.replace("{minimumGoal}", minimumGoal);
+    item = item.replace("{idealGoal}", idealGoal);
 
     return item;
 }
@@ -51,7 +55,37 @@ function BuildDropItem(projectID, projectName){
 /////                   AddProjectRows
 /////
 /////
-function AddProjectRows(data){
+function CalculateProjectTotals(data){
+    console.log("CalculateProjectTotals--------------");
+    //TODO: i need to save min and ideal goals to the drop down during the get project info request
+
+
+    var projectArray = [];
+    var currentProjectNum = 0;
+
+    $('#dropdown-insertion .project-choice').each(function () { 
+        //console.log($(this).text() + " : " + this.id);
+
+        //TODO: save the min and ideal times
+        projectArray[currentProjectNum] = new Object();
+        projectArray[currentProjectNum].name = $(this).text();
+        projectArray[currentProjectNum].id = this.id;
+        projectArray[currentProjectNum].minimumGoal = $(this).attr("minimumGoal"); 
+        projectArray[currentProjectNum].idealGoal = $(this).attr("idealGoal"); 
+
+
+
+        projectArray[currentProjectNum].timeStudied = 0;
+
+        for(var i in data.values){
+            if(data.values[i][0] == this.id){
+                projectArray[currentProjectNum].timeStudied += data.values[i][1];
+            }
+        }
+
+        currentProjectNum += 1;
+    });
+    console.log(projectArray);
     // create dictionary 
     //
     // foreach projectID, 
@@ -66,18 +100,32 @@ function AddProjectRows(data){
 
 
 
-    for(var i in data.values){
-        var projectID = data.values[i][0];
-        var minRemaining = data.values[i][0];
-        var idealRemaining = data.values[i][0];
-        var projectName = "";
+    for(var i in projectArray){
+        var projectID = projectArray[i].id;
+        var projectName = projectArray[i].name;
+        var timeStudied = (  (projectArray[i].timeStudied) / (60 * 60 * 1000)  ).toFixed(2);//TODO: this hides really small fractions, such as 1/60th
+        
 
-        //loop through each drop down item,
-        //  if current id in rows == id in drop down
-        //      then save that name to that id
+        var minimumGoal = projectArray[i].minimumGoal;
+        var idealGoal = projectArray[i].idealGoal;
 
 
-        AddProjectRow(projectName, projectID, minRemaining, idealRemaining);
+        var minRemaining = minimumGoal; 
+        var idealRemaining = idealGoal;
+
+
+        minRemaining = minimumGoal - timeStudied;
+        idealRemaining = idealGoal - timeStudied;
+
+        if(minRemaining < 0){
+            minRemaining = 0;
+        }
+
+        if(idealRemaining < 0){
+            idealRemaining = 0;
+        }
+
+        AddProjectRow(projectName, projectID, timeStudied, minRemaining, idealRemaining);
     }
 }
 
@@ -91,16 +139,18 @@ function AddProjectRows(data){
 /////                   AddProjectRow
 /////
 /////
-function AddProjectRow(projectName, projectID, minRemaining, idealRemaining){
+function AddProjectRow(projectName, projectID, timeStudied, minRemaining, idealRemaining){
     var rowTemplate =    
     `<tr id="{projectID}">
         <td class="project-name">{projectName}</td>
+        <td class="time-studied">{timeStudied}</td>
         <td class="min-time">{minRemaining}</td>
         <td class="ideal-time">{idealRemaining}</td>
     </tr>`;
 
     row = rowTemplate;
     row = row.replace("{projectID}", projectID);
+    row = row.replace("{timeStudied}", timeStudied);
     row = row.replace("{projectName}", projectName);
     row = row.replace("{minRemaining}", minRemaining);
     row = row.replace("{idealRemaining}", idealRemaining);
