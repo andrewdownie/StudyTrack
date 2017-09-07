@@ -41,7 +41,7 @@ $(document).ready(function(){
 
 
     if(OAuthCookie == "" && window.location.pathname != "/login.html"){
-        //window.location.replace("login.html");
+        window.location.replace("login.html");
         return;
     }
 
@@ -68,7 +68,7 @@ $(document).ready(function(){
 
             $("#logout").click(function(){
                 setCookie(OAUTH_TOKEN, "", 0);
-                //window.location.href = "/login.html";
+                window.location.href = "/login.html";
             });
 
 
@@ -155,7 +155,7 @@ function SignInWrapper(){
             var oauthCookie = getCookie(OAUTH_TOKEN);
 
             if(oauthCookie != "" && typeof oauthCookie != 'undefined' && window.location.pathname == "/login.html"){
-                //window.location.replace("index.html");
+                window.location.replace("index.html");
                 console.log("the user has signed in, go to index.html");
                 return;
             }
