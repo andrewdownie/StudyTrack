@@ -130,7 +130,17 @@ function CalculateProjectTotals(data){
             idealRemaining = 0;
         }
 
-        AddProjectRow(projectName, projectID, hoursStudied, minRemaining, idealRemaining);
+
+        hs_moment = moment.duration(hoursStudied);
+        mr_moment = moment.duration(minRemaining);
+        ir_moment = moment.duration(idealRemaining);
+
+        hs_str = hs_moment.hours() + ":" + hs_moment.minutes();
+        mr_str = mr_moment.hours() + ":" + mr_moment.minutes();
+        ir_str = ir_moment.hours() + ":" + ir_moment.minutes();
+
+
+        AddProjectRow(projectName, projectID, hs_str, mr_str, ir_str);
     }
 }
 
