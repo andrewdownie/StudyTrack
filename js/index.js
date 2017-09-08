@@ -115,7 +115,6 @@ function CalculateProjectTotals(data){
 
         minRemaining = (minimumGoal * 3600000) - msStudied;
         idealRemaining = (idealGoal * 3600000) - msStudied;
-        alert(minRemaining);
 
 
         if(minRemaining < 0){
@@ -131,9 +130,10 @@ function CalculateProjectTotals(data){
         var idealMoment = moment.duration(idealRemaining); 
         var timeStudied = moment.duration(msStudied);
 
-        timeStudiedStr = timeStudied.hours() + ":" + timeStudied.minutes().toString().padStart(2, "0"); 
-        minStr = minMoment.hours();
-        idealStr = idealMoment.hours();
+        timeStudiedStr = timeStudied.hours().toString().padStart(2, " ") + ":" + timeStudied.minutes().toString().padStart(2, "0"); 
+        minStr = minMoment.hours().toString().padStart(2, " ") + ":" + minMoment.minutes().toString().padStart(2, "0");
+        idealStr = idealMoment.hours().toString().padStart(2, " ") + ":" + idealMoment.minutes().toString().padStart(2, "0");
+
 
 
         AddProjectRow(projectName, projectID, timeStudiedStr, minStr, idealStr);

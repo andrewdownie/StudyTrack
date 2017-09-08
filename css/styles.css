@@ -117,3 +117,13 @@ body{
     margin-bottom: 5px;
     margin-top: 5px;
 }
+
+#projects-table tr td:nth-child(2),
+#projects-table tr td:nth-child(3),
+#projects-table tr td:nth-child(4),
+#projects-table tr th:nth-child(2),
+#projects-table tr th:nth-child(3),
+#projects-table tr th:nth-child(4)
+{
+    text-align: right;
+}
