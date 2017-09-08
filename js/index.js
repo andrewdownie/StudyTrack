@@ -63,6 +63,9 @@ function CalculateProjectTotals(data){
     var projectArray = [];
     var currentProjectNum = 0;
 
+    ///
+    /// Total Study Time spent on each project
+    ///
     $('#dropdown-insertion .project-choice').each(function () { 
         //console.log($(this).text() + " : " + this.id);
 
@@ -103,24 +106,17 @@ function CalculateProjectTotals(data){
     for(var i in projectArray){
         var projectID = projectArray[i].id;
         var projectName = projectArray[i].name;
-        var msStudied = projectArray[i].timeStudied;//TODO: this hides really small fractions, such as 1/60th
-        //alert(msStudied)
+        var msStudied = projectArray[i].timeStudied;
 
-        var secStudied = msStudied / 1000;
-        var minutesStudied = secStudied / 60;
-        var hoursStudied = (minutesStudied / 60).toFixed(3);
-        
 
         var minimumGoal = projectArray[i].minimumGoal;
         var idealGoal = projectArray[i].idealGoal;
+        
 
+        minRemaining = (minimumGoal * 3600000) - msStudied;
+        idealRemaining = (idealGoal * 3600000) - msStudied;
+        alert(minRemaining);
 
-        var minRemaining = minimumGoal; 
-        var idealRemaining = idealGoal;
-
-
-        minRemaining = minimumGoal - hoursStudied;
-        idealRemaining = idealGoal - hoursStudied;
 
         if(minRemaining < 0){
             minRemaining = 0;
@@ -131,16 +127,16 @@ function CalculateProjectTotals(data){
         }
 
 
-        hs_moment = moment.duration(hoursStudied);
-        mr_moment = moment.duration(minRemaining);
-        ir_moment = moment.duration(idealRemaining);
+        var minMoment = moment.duration(minRemaining);  
+        var idealMoment = moment.duration(idealRemaining); 
+        var timeStudied = moment.duration(msStudied);
 
-        hs_str = hs_moment.hours() + ":" + hs_moment.minutes();
-        mr_str = mr_moment.hours() + ":" + mr_moment.minutes();
-        ir_str = ir_moment.hours() + ":" + ir_moment.minutes();
+        timeStudiedStr = timeStudied.hours() + ":" + timeStudied.minutes().toString().padStart(2, "0"); 
+        minStr = minMoment.hours();
+        idealStr = idealMoment.hours();
 
 
-        AddProjectRow(projectName, projectID, hs_str, mr_str, ir_str);
+        AddProjectRow(projectName, projectID, timeStudiedStr, minStr, idealStr);
     }
 }
 

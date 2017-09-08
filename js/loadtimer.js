@@ -5,8 +5,13 @@ $(document).ready(function(){
     $.get("timerbar.html", function(navbarHtml){
         $("body").append(navbarHtml);
 
-        tickSound30 = new Audio("tickSound30.mp3");
-        alarmSound = new Audio("alarmSound.mp3");
+
+        if(tickSound30 == null){
+            tickSound30 = new Audio("tickSound30.mp3");
+        }
+        if(alarmSound == null){
+            alarmSound = new Audio("alarmSound.mp3");
+        }
 
 
         ///
