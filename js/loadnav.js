@@ -36,12 +36,10 @@ var currentApiRequest = false;
 /////   
 /////
 $(document).ready(function(){
-    //TODO: OAuth token is undefined.....................................................................
     var OAuthCookie = getCookie(OAUTH_TOKEN);
 
 
     if(OAuthCookie == "" && !CheckPath("login.html")){
-        //window.location.replace("login.html");
         Redirect("login.html");
         return;
     }
@@ -49,7 +47,7 @@ $(document).ready(function(){
     
 
     if(OAuthCookie != "" && typeof OAuthCookie != "undefined"){
-        console.log("---- check for ss");
+        //console.log("---- check for ss");
         CheckForSS();
 
 
@@ -91,46 +89,21 @@ $(document).ready(function(){
 /////                           Handles OAuth and signing the user in
 /////
 function initClient() {
+    if(getCookie(OAUTH_TOKEN)){
+        //TODO: is it okay if I don't connect via gapi if the user already has a cookie?
+        return;
+    }
 
-        gapi.client.init({
+    gapi.client.init({
         'apiKey': 'AIzaSyDPpbEG8KS9Eu3-yrx9TAlCqaCaCVNCN48',
         'clientId': '794809467159-f7ngrrspdm6vkma7b6e898d7et7j4p1u.apps.googleusercontent.com',
         'scope': 'https://www.googleapis.com/auth/drive.file',
         'discoveryDocs': ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest']
     }).then(function () {
         GoogleAuth = gapi.auth2.getAuthInstance();
-
-        // Listen for sign-in state changes.
-        GoogleAuth.isSignedIn.listen(updateSigninStatus);//This doesn't seem to work...
         
         SignInWrapper();
     });
-}
-
-
-
-
-
-
-
-
-/**
- * Listener called when user completes auth flow. If the currentApiRequest
- * variable is set, then the user was prompted to authorize the application
- * before the request executed. In that case, proceed with that API request.
- */
-function updateSigninStatus(isSignedIn) {
-    console.log("pls, why doesn' this get called when a user is done with the popup or ever?")
-
-    if (isSignedIn) {
-        isAuthorized = true;
-        if (currentApiRequest) {
-            sendAuthorizedApiRequest(currentApiRequest);
-        }
-    } 
-    else {
-        isAuthorized = false;
-    }
 }
 
 
@@ -156,9 +129,7 @@ function SignInWrapper(){
             setCookieEpoch(OAUTH_TOKEN, isSignedIn.Zi.access_token, isSignedIn.Zi.expires_at);
             var oauthCookie = getCookie(OAUTH_TOKEN);
 
-            //if(oauthCookie != "" && typeof oauthCookie != 'undefined' && window.location.pathname == "/login.html"){
             if(oauthCookie != "" && typeof oauthCookie != 'undefined' && CheckPath("login.html")){
-                //window.location.replace("index.html");
                 Redirect("index.html");
                 console.log("the user has signed in, go to index.html");
                 return;
@@ -196,7 +167,6 @@ function CheckForSS(){
         url: url, 
         success: function(data){
             console.log("Check for SS success");
-            //console.log(data);
             for(var i in data.files){
                 if(data.files[i].name == USER_DATA_SHEET_NAME){
                     matches = matches + 1;
@@ -214,7 +184,6 @@ function CheckForSS(){
                 CreateSS(USER_DATA_SHEET_NAME);
             }
             else{
-                //userdata_sheetID = lastFoundSheetID;
                 setCookie(USERDATA_SHEET_ID, lastFoundSheetID, oauth_expireTime);
                 console.log("User data sheet already exists, no need to create it, we are going to use sheet: " + getCookie(USERDATA_SHEET_ID));
 
@@ -282,17 +251,17 @@ function CreateSS(name){
 
 
 /////                   Insert Project Goals
-/////                           Insert a new row into columns A, B, C and D
+/////                           Insert a new row into columns A, B, C, D and E
 /////
-function InsertProjectGoals(projectName, minimumGoal, idealGoal, callback){
-    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + getCookie(USERDATA_SHEET_ID) + "/values/" + SheetName() + "!A1:D1:append?valueInputOption=RAW&access_token=" + getCookie(OAUTH_TOKEN);
+function InsertProjectGoals(projectName, minimumGoal, idealGoal, deleted, callback){
+    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + getCookie(USERDATA_SHEET_ID) + "/values/" + SheetName() + "!A1:E1:append?valueInputOption=RAW&access_token=" + getCookie(OAUTH_TOKEN);
 
     console.log("the url is: " + url);
 
     var ajax_data = 
     `
     {
-        "values": [["{projectID}", "{projectName}", "{minimumGoal}", "{idealGoal}"]]
+        "values": [["{projectID}", "{projectName}", "{minimumGoal}", "{idealGoal}", "{deleted}"]]
     } 
     `;
     
@@ -303,6 +272,7 @@ function InsertProjectGoals(projectName, minimumGoal, idealGoal, callback){
     ajax_data = ajax_data.replace("{projectName}", projectName);
     ajax_data = ajax_data.replace("{minimumGoal}", minimumGoal);
     ajax_data = ajax_data.replace("{idealGoal}", idealGoal);
+    ajax_data = ajax_data.replace("{deleted}", deleted.toString());
 
 
     // Execute the API request.
@@ -315,12 +285,12 @@ function InsertProjectGoals(projectName, minimumGoal, idealGoal, callback){
         success: function(ajaxData){
             console.log("Insert row into sheet success");
             console.log(ajaxData);
-            callback(ajaxData, projectID, projectName, minimumGoal, idealGoal);
+            callback(ajaxData, projectID, projectName, minimumGoal, idealGoal, deleted);
         },
         error: function(ajaxData){
             console.log("Insert row into sheet failure");
             console.log(ajaxData);
-            callback(ajaxData, projectID, projectName, minimumGoal, idealGoal);
+            callback(ajaxData, projectID, projectName, minimumGoal, idealGoal, deleted);
         },
     });
 }
@@ -333,16 +303,16 @@ function InsertProjectGoals(projectName, minimumGoal, idealGoal, callback){
 
 
 /////                   Insert Project Goals Header
-/////                           Insert the header row into columns A, B, C and D 
+/////                           Insert the header row into columns A, B, C, D and E
 /////
 function InsertProjectGoalsHeader(){
-    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + getCookie(USERDATA_SHEET_ID) + "/values/" + SheetName() + "!A1:D1:append?valueInputOption=RAW&access_token=" + getCookie(OAUTH_TOKEN);
+    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + getCookie(USERDATA_SHEET_ID) + "/values/" + SheetName() + "!A1:E1:append?valueInputOption=RAW&access_token=" + getCookie(OAUTH_TOKEN);
 
 
     var ajax_data = 
     `
     {
-        "values": [["Project ID", "Project Name", "Minimum Goal", "Ideal Goal"]]
+        "values": [["Project ID", "Project Name", "Minimum Goal", "Ideal Goal", "Deleted Status"]]
     } 
     `;
     
@@ -378,7 +348,7 @@ function InsertProjectGoalsHeader(){
 /////
 function ReadProjectGoals(callback){
     var access_token = getCookie(OAUTH_TOKEN);
-    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + getCookie(USERDATA_SHEET_ID) + "/values/" + SheetName() + "!A2:D?access_token=" + access_token;
+    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + getCookie(USERDATA_SHEET_ID) + "/values/" + SheetName() + "!A2:E?access_token=" + access_token;
     console.log("the url is: " + url);
 
 
@@ -409,11 +379,11 @@ function ReadProjectGoals(callback){
 
 
 /////                   Insert Study Time
-/////                           Inserts a new row into this weeks work sheet in columns A and B
+/////                           Inserts a new row into this weeks work sheet in columns G and H
 /////
 function InsertStudyTime(projectID, duration){
-    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + getCookie(USERDATA_SHEET_ID) + "/values/" + SheetName() + "!F1:G1:append?valueInputOption=RAW&access_token=" + getCookie(OAUTH_TOKEN);
-    //console.log("the url is: " + url);
+    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + getCookie(USERDATA_SHEET_ID) + "/values/" + SheetName() + "!G1:H1:append?valueInputOption=RAW&access_token=" + getCookie(OAUTH_TOKEN);
+
     var ajax_data = 
     `
     {
@@ -455,7 +425,7 @@ function InsertStudyTime(projectID, duration){
 /////
 function ReadStudyTime(callback){
     var access_token = getCookie(OAUTH_TOKEN);
-    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + getCookie(USERDATA_SHEET_ID) + "/values/" + SheetName() + "!F2:G?access_token=" + access_token;
+    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + getCookie(USERDATA_SHEET_ID) + "/values/" + SheetName() + "!G2:H?access_token=" + access_token;
     console.log("the url is: " + url);
 
 
@@ -553,7 +523,7 @@ function CreateSheet(){
                       "sheetType": "GRID",
                       "gridProperties": {
                         "rowCount": 50,
-                        "columnCount": 7 
+                        "columnCount": 8 
                       }
                     }
                 }
@@ -627,15 +597,15 @@ function SheetName(){
 /////                   UpdateProjectGoal
 /////
 /////
-function UpdateProjectGoal(projectID, newName, newMinTime, newIdealTime, projectRowNum, callback){
-    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + getCookie(USERDATA_SHEET_ID) + "/values/" + SheetName() + "!A" + projectRowNum + ":D" + projectRowNum + "?valueInputOption=RAW&access_token=" + getCookie(OAUTH_TOKEN);
+function UpdateProjectGoal(projectID, newName, newMinTime, newIdealTime, newDeleted, projectRowNum, callback){
+    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + getCookie(USERDATA_SHEET_ID) + "/values/" + SheetName() + "!A" + projectRowNum + ":E" + projectRowNum + "?valueInputOption=RAW&access_token=" + getCookie(OAUTH_TOKEN);
 
     console.log("the update url is: " + url);
 
     var ajax_data = 
     `
     {
-        "values": [["{projectID}", "{projectName}", "{minimumGoal}", "{idealGoal}"]]
+        "values": [["{projectID}", "{projectName}", "{minimumGoal}", "{idealGoal}", {deleted}]]
     } 
     `;
     
@@ -646,6 +616,7 @@ function UpdateProjectGoal(projectID, newName, newMinTime, newIdealTime, project
     ajax_data = ajax_data.replace("{projectName}", newName);
     ajax_data = ajax_data.replace("{minimumGoal}", newMinTime);
     ajax_data = ajax_data.replace("{idealGoal}", newIdealTime);
+    ajax_data = ajax_data.replace("{deleted}", newDeleted.toString());
 
 
     // Execute the API request.

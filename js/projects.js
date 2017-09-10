@@ -19,10 +19,12 @@ $(document).ready(function(){
         var curName = $("#" + editProjectID + " .project-name").text();
         var curMinTime = parseInt($("#" + editProjectID + " .min-time").text());
         var curIdealTime = parseInt($("#" + editProjectID + " .ideal-time").text());
+        var curDeleted = $("#" + editProjectID).hasClass("text-red");
 
         $("#edit-project-name").val(curName);
         $("#edit-minimum-time").val(curMinTime);
         $("#edit-ideal-time").val(curIdealTime);
+        $("#delete-project").prop('checked', curDeleted);
 
         $("#edit-project-modal").modal('show');
 
@@ -35,17 +37,20 @@ $(document).ready(function(){
         var curName = $("#" + editProjectID + " .project-name").text();
         var curMinTime = parseInt($("#" + editProjectID + " .min-time").text());
         var curIdealTime = parseInt($("#" + editProjectID + " .ideal-time").text());
+        var deleted = $("#delete-project").is(":checked");
 
 
-        if(curName.includes("(deleted)")){
-            alert("This project has already been marked for deletion, it will be removed at the start of next week. To unmark it, removed (deleted) from its name");
-            return;
-        }
 
         var projectRow = FindProjectRowNum(editProjectID);
-        UpdateProjectGoal(editProjectID, curName + " (deleted)", curMinTime, curIdealTime, projectRow, function(){
-            $("#" + editProjectID + " .project-name").text(curName + " (deleted)");
+        UpdateProjectGoal(editProjectID, curName, curMinTime, curIdealTime, deleted.toString(), projectRow, function(){
+            if(deleted.toString() == "true"){
+                $("#" + editProjectID).addClass("text-red");
+            }
+            else{
+                $("#" + editProjectID).removeClass("text-red");
+            }
         });
+
         $("#edit-project-modal").modal('hide');
     });
 
@@ -56,6 +61,7 @@ $(document).ready(function(){
         var newName = $("#edit-project-name").val();
         var newMinTime = $("#edit-minimum-time").val();
         var newIdealTime = $("#edit-ideal-time").val();
+        var deleted = $().val();
 
         if(ValidProjectName(newName) == false){
             alert("Project names can only contain letters, numbers, underscores and dashes.");
@@ -63,7 +69,7 @@ $(document).ready(function(){
         }
 
         var projectRow = FindProjectRowNum(editProjectID);
-        UpdateProjectGoal(editProjectID, newName, newMinTime, newIdealTime, projectRow, function(){
+        UpdateProjectGoal(editProjectID, newName, newMinTime, newIdealTime, deleted, projectRow, function(){
             $("#" + editProjectID + " .project-name").text(newName);
             $("#" + editProjectID + " .min-time").text(newMinTime);
             $("#" + editProjectID + " .ideal-time").text(newIdealTime);
@@ -105,8 +111,9 @@ function FindProjectRowNum(projectID){
 function ReadProjectGoalsCallback(data){
     rows = data.values;
 
+
     for(var i in rows){
-        AddProjectRow(data, rows[i][0], rows[i][1], rows[i][2], rows[i][3]);
+        AddProjectRow(data, rows[i][0], rows[i][1], rows[i][2], rows[i][3], rows[i][4]);
     }
 
 }
@@ -159,7 +166,8 @@ function SetupNewProject(){
 
 
         console.log("adding project");
-        InsertProjectGoals(projectName, minimumTime, idealTime, AddProjectRow);
+        InsertProjectGoals(projectName, minimumTime, idealTime, "FALSE", AddProjectRow);
+
         $("#add-project-modal").modal("hide");
 }
 
@@ -188,9 +196,9 @@ function ValidProjectName(projectName){
 /////                   AddProjectRow
 /////
 /////
-function AddProjectRow(ajaxData, projectID, projectName, weeklyMin, weeklyGoal){
+function AddProjectRow(ajaxData, projectID, projectName, weeklyMin, weeklyGoal, deleted){
     var rowTemplate =    
-    `<tr id="{projectID}">
+    `<tr {deleted} id="{projectID}">
         <td class="project-name">{projectName}</td>
         <td class="min-time">{weeklyMin}</td>
         <td class="ideal-time">{weeklyGoal}</td>
@@ -203,6 +211,13 @@ function AddProjectRow(ajaxData, projectID, projectName, weeklyMin, weeklyGoal){
     row = row.replace("{weeklyMin}", weeklyMin);
     row = row.replace("{weeklyGoal}", weeklyGoal);
     row = row.replace("{buttonID}", "delete-" + projectID);
+
+    if(deleted == "TRUE"){
+        row = row.replace("{deleted}", 'class="text-red"');
+    }
+    else{
+        row = row.replace("{deleted}", "");
+    }
 
     $("#projects-table").append(row);
 }

@@ -20,6 +20,7 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="css/styles.css">
 
+
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -40,6 +41,7 @@
     <script src="js/loadnav.js"></script>
     <script src="js/loadtimer.js"></script>
     <script src="js/projects.js"></script>
+
 
 </head>
 
@@ -174,7 +176,10 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger pull-left" id="delete-project" data-dismiss="modal">Delete</button>
+                    <span class="pull-left">
+                        Delete 
+                        <input type="checkbox" id="delete-project" name="checkbox-delete-project" checked>
+                    </span>
                     <button type="button" class="btn btn-success" id="update-project">Update</button>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                 </div>
