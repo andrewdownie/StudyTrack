@@ -7,10 +7,10 @@ $(document).ready(function(){
 
 
         if(tickSound30 == null){
-            tickSound30 = new Audio("tickSound30.mp3");
+            //tickSound30 = new Audio("tickSound30.mp3");
         }
         if(alarmSound == null){
-            alarmSound = new Audio("alarmSound.mp3");
+            //alarmSound = new Audio("alarmSound.mp3");
         }
 
 
@@ -58,7 +58,9 @@ $(document).ready(function(){
                 setCookie("TIMER_STATUS", "idle");
                 DisplayTimerStatus();
             }
-             tickSound30.pause();
+            if(tickSound30 != null){
+                tickSound30.pause();
+            }
         });
 
 
@@ -162,7 +164,9 @@ function DisplayTimerStatus(){
 
         $("#timer-project-name").show();
         $("#timer-time").show();
-        tickSound30.play();
+        if(tickSound30 != null){
+            tickSound30.play();
+        }
 
     }
     else{
@@ -174,7 +178,9 @@ function DisplayTimerStatus(){
 
         $("#timer-project-name").hide();
         $("#timer-time").hide();
-        tickSound30.pause();
+        if(tickSound30 != null){
+            tickSound30.pause();
+        }
     }
 }
 
@@ -379,7 +385,12 @@ function RunProjectTimer(){
                 remainingTime = moment.duration(0);
                 $("#timer-finished-modal").modal('show');
                 RunEndTimer();
-                tickSound30.pause();
+                if(tickSound30 != null){
+                    tickSound30.pause();
+                }
+                if(alarmSound != null){
+                    alarmSound.play();
+                }
             }
 
 

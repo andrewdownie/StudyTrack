@@ -595,17 +595,10 @@ function CreateSheet(){
 /////                   Week Of Month
 /////                           Returns the week of the current month
 /////
-function WeekOfMonth(){
-    ///
-    /// Generate the name of this weeks sheet
-    /// Source: https://stackoverflow.com/questions/3280323/get-week-of-the-month, user: https://stackoverflow.com/users/3276277/eric
-    ///
+function LastSunday(){
     var d = new Date();
-    var date = d.getDate();
-    var day = d.getDay();
-
-    var weekOfMonth = Math.ceil((date - 1 - day) / 7);
-    return weekOfMonth;
+    d.setDate(d.getDate() - d.getDay());//TODO: use the setting the user wanted for start of the week here
+    return d.getDate();
 }
 
 
@@ -621,7 +614,7 @@ function WeekOfMonth(){
 function SheetName(){
     var d = new Date();
 
-    return d.getFullYear().toString() + "-" + (d.getMonth() + 1).toString().padStart(2, '0') + "week" + WeekOfMonth();
+    return d.getFullYear().toString() + "-" + (d.getMonth() + 1).toString().padStart(2, '0') + "-" + LastSunday();
 }
 
 
