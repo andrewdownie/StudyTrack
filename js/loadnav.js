@@ -38,11 +38,11 @@ var currentApiRequest = false;
 $(document).ready(function(){
     var OAuthCookie = getCookie(OAUTH_TOKEN);
 
-    if(CheckUrlEnd("oauth2.html")){
+    /*if(CheckUrlEnd("oauth2.html")){
         var tokenFromQuery = loadPageVar("id_token");
         alert(tokenFromQuery);
         setCookie(OAUTH_TOKEN, tokenFromQuery); 
-    }
+    }*/
 
 
     if(OAuthCookie == "" && !CheckUrlEnd("login.html")){
