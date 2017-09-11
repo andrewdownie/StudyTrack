@@ -39,10 +39,9 @@ $(document).ready(function(){
     var OAuthCookie = getCookie(OAUTH_TOKEN);
 
     if(CheckUrlEnd("oauth2.html")){
-        var tokenFromQuery;
+        var tokenFromQuery = loadPageVar("id_token");
         alert(tokenFromQuery);
         setCookie(OAUTH_TOKEN, tokenFromQuery); 
-        return;
     }
 
 
@@ -934,3 +933,17 @@ function ShowMessageModal(modalTitle, modalMessage){
 function HideMessageModal(){
     $("#message-modal").modal("hide");
 }
+
+
+
+
+
+
+
+
+/////                   loadPageVar
+/////
+///// https://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript#answer-14810325
+function loadPageVar (sVar) {
+    return unescape(window.location.search.replace(new RegExp("^(?:.*[&\\?]" + escape(sVar).replace(/[\.\+\*]/g, "\\$&") + "(?:\\=([^&]*))?)?.*$", "i"), "$1"));
+  }
