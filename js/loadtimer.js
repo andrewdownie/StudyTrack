@@ -7,10 +7,10 @@ $(document).ready(function(){
 
 
         if(tickSound30 == null){
-            //tickSound30 = new Audio("tickSound30.mp3");
+            tickSound30 = new Audio("tickSound30.mp3");
         }
         if(alarmSound == null){
-            //alarmSound = new Audio("alarmSound.mp3");
+            alarmSound = new Audio("alarmSound.mp3");
         }
 
 
