@@ -42,6 +42,7 @@ $(document).ready(function(){
         var tokenFromQuery;
         alert(tokenFromQuery);
         setCookie(OAUTH_TOKEN, tokenFromQuery); 
+        return;
     }
 
 
