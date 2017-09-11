@@ -89,21 +89,49 @@ $(document).ready(function(){
 /////                           Handles OAuth and signing the user in
 /////
 function initClient() {
-    if(getCookie(OAUTH_TOKEN)){
-        //TODO: is it okay if I don't connect via gapi if the user already has a cookie?
+    var OAuthCookie = getCookie(OAUTH_TOKEN);
+    if(OAuthCookie != "" && typeof OAuthCookie != "undefined"){
         return;
     }
 
-    gapi.client.init({
-        'apiKey': 'AIzaSyDPpbEG8KS9Eu3-yrx9TAlCqaCaCVNCN48',
-        'clientId': '794809467159-f7ngrrspdm6vkma7b6e898d7et7j4p1u.apps.googleusercontent.com',
-        'scope': 'https://www.googleapis.com/auth/drive.file',
-        'discoveryDocs': ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest']
-    }).then(function () {
-        GoogleAuth = gapi.auth2.getAuthInstance();
-        
-        SignInWrapper();
-    });
+    var API_KEY = 'AIzaSyDPpbEG8KS9Eu3-yrx9TAlCqaCaCVNCN48';
+    var CLIENT_ID = '794809467159-f7ngrrspdm6vkma7b6e898d7et7j4p1u.apps.googleusercontent.com';
+    var SCOPE = 'https://www.googleapis.com/auth/drive.file';
+    var DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest';
+
+
+    if(window.location.toString().includes("localhost:8080")){
+        //
+        //  Sign in with pop up if developing locally
+        //
+        gapi.client.init({
+            'apiKey': API_KEY,
+            'clientId': CLIENT_ID,
+            'scope': SCOPE,
+            'discoveryDocs': [DISCOVERY_DOC]
+        }).then(function () {
+            GoogleAuth = gapi.auth2.getAuthInstance();
+            
+            SignInWrapper();
+        });
+    }
+    else{
+        //
+        //  Sign in using redirects if this site is being hosted from a secure sever (example github.io)
+        //
+        gapi.client.init({
+            'apiKey': API_KEY,
+            'clientId': CLIENT_ID,
+            'scope': SCOPE,
+            'discoveryDocs': [DISCOVERY_DOC],
+            'ux_mode': 'redirect',
+            'redirect_uri': BuildRedirectString("index.html")
+        }).then(function () {
+            GoogleAuth = gapi.auth2.getAuthInstance();
+            
+            SignInWrapper();
+        });
+    }
 }
 
 
@@ -798,11 +826,10 @@ function UpdateProjectGoal(projectID, newName, newMinTime, newIdealTime, newDele
 
 
 
-/////                   Redirect
-/////                           : Redirects by changing the last part of the current url
+/////                   BuildRedirectString
 /////
-function Redirect(urlEnd){
-    console.log("redirect pls");
+/////
+function BuildRedirectString(urlEnd){
     var path = window.location.pathname;
     var pathSplit = path.split("/");
     var pathRebuilt = "";
@@ -813,7 +840,21 @@ function Redirect(urlEnd){
 
     pathRebuilt += urlEnd;
 
-    window.location.href = pathRebuilt;
+    return pathRebuilt;
+}
+
+
+
+
+
+
+
+
+/////                   Redirect
+/////                           : Redirects by changing the last part of the current url
+/////
+function Redirect(urlEnd){
+    window.location.href = BuildRedirectString(urlEnd);
 }
 
 
