@@ -106,38 +106,18 @@ function initClient() {
     var DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest';
 
 
-    if(window.location.toString().includes("localhost:8080")){
-        //
-        //  Sign in with pop up if developing locally
-        //
-        gapi.client.init({
-            'apiKey': API_KEY,
-            'clientId': CLIENT_ID,
-            'scope': SCOPE,
-            'discoveryDocs': [DISCOVERY_DOC]
-        }).then(function () {
-            GoogleAuth = gapi.auth2.getAuthInstance();
-            
-            SignInWrapper();
-        });
-    }
-    else{
-        //
-        //  Sign in using redirects if this site is being hosted from a secure sever (example github.io)
-        //
-        gapi.client.init({
-            'apiKey': API_KEY,
-            'clientId': CLIENT_ID,
-            'scope': SCOPE,
-            'discoveryDocs': [DISCOVERY_DOC],
-            'ux_mode': 'redirect',
-            'redirect_uri': BuildRedirectString("oauth2.html")
-        }).then(function () {
-            GoogleAuth = gapi.auth2.getAuthInstance();
-            
-            SignInWrapper();
-        });
-    }
+    gapi.client.init({
+        'apiKey': API_KEY,
+        'clientId': CLIENT_ID,
+        'scope': SCOPE,
+        'discoveryDocs': [DISCOVERY_DOC],
+        'ux_mode': 'redirect',
+        'redirect_uri': BuildRedirectString("oauth2.html")
+    }).then(function () {
+        GoogleAuth = gapi.auth2.getAuthInstance();
+        
+        SignInWrapper();
+    });
 }
 
 
