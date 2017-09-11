@@ -18,7 +18,13 @@ $(document).ready(function(){
         /// Start the timer right away, in case it should already be running
         ///
         //$("#timer-time").text(FormatTimerTime(RemainingTimeMS()));
-        RunProjectTimer();
+        if(getCookie("TIMER_STATUS") == "running"){
+            RunProjectTimer();
+            $("#favicon").attr("href","clock.png");
+        }
+        else{
+            $("#favicon").attr("href","favicon.png");
+        }
         DisplayTimerStatus();
 
         ///
@@ -69,6 +75,7 @@ $(document).ready(function(){
         ///
         $("#stop-timer").click(function(){
             setCookie("TIMER_STATUS", "idle");
+            $("#favicon").attr("href","favicon.png");
             DisplayTimerStatus();
 
             if(tickSound30 != null){
@@ -110,6 +117,7 @@ $(document).ready(function(){
 
 
                 $("#timer-project-name").text(getCookie("TIMER_PROJECT_NAME"));
+                $("#favicon").attr("href","clock.png");
             }
 
         });
@@ -158,6 +166,10 @@ function AddFocusTime(focusFactor){
     //console.log("Effective duration is: " + effectiveDuration);
 
     InsertStudyTime(getCookie("TIMER_PROJECT_ID"), effectiveDuration);
+
+
+    //NOTE: this is from index.js
+    LoadIndexTable();
 
     $("#timer-finished-modal").modal("hide");
     setCookie("TIMER_STATUS", "IDLE");
@@ -405,6 +417,7 @@ function RunProjectTimer(){
             var remainingTime = RemainingTimeMS();
 
             if(remainingTime.as('milliseconds') <= 0){
+                $("#favicon").attr("href","favicon.png");
                 console.log("RunProjectTimer ended");
                 remainingTime = moment.duration(0);
                 $("#timer-finished-modal").modal('show');
@@ -482,7 +495,7 @@ function TimerDuration(){
     var startTime = getCookie("TIMER_START_TIME");
     var endTime = getCookie("TIMER_END_TIME");
 
-    var duration = endTime - startTime;
+    var duration = endTime - startTime + 5;
     console.log("TimerDuration() returned: " + duration);
     return duration;
 }

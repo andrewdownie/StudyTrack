@@ -2,6 +2,24 @@
 /////
 /////
 $(document).ready(function(){
+    LoadIndexTable();
+
+});
+
+
+
+
+
+
+
+
+/////                   LoadIndexTable
+/////
+/////
+function LoadIndexTable(){
+    $(".project-row").remove();
+    $(".project-choice").remove();
+
     ReadProjectGoals(function(data){
         console.log(data);
 
@@ -17,13 +35,7 @@ $(document).ready(function(){
         ReadStudyTime(CalculateProjectTotals);
 
     });
-
-
-
-
-
-
-});
+}
 
 
 
@@ -57,7 +69,6 @@ function BuildDropItem(projectID, projectName, minimumGoal, idealGoal){
 /////
 function CalculateProjectTotals(data){
     console.log("CalculateProjectTotals--------------");
-    //TODO: i need to save min and ideal goals to the drop down during the get project info request
 
 
     var projectArray = [];
@@ -69,7 +80,6 @@ function CalculateProjectTotals(data){
     $('#dropdown-insertion .project-choice').each(function () { 
         //console.log($(this).text() + " : " + this.id);
 
-        //TODO: save the min and ideal times
         projectArray[currentProjectNum] = new Object();
         projectArray[currentProjectNum].name = $(this).text();
         projectArray[currentProjectNum].id = this.id;
@@ -89,18 +99,6 @@ function CalculateProjectTotals(data){
         currentProjectNum += 1;
     });
     console.log(projectArray);
-    // create dictionary 
-    //
-    // foreach projectID, 
-    //      create dictionary entry for each projectID
-    //      save the min and ideal times to this entry
-    //
-    //      foreach project row, 
-    //          add to the project time, that have matching projectID
-    //
-    //  once all the projects / rows have been exhausted:
-    //      call the addproject row function for each dictionary entry
-
 
 
     for(var i in projectArray){
@@ -152,7 +150,7 @@ function CalculateProjectTotals(data){
 /////
 function AddProjectRow(projectName, projectID, timeStudied, minRemaining, idealRemaining){
     var rowTemplate =    
-    `<tr id="{projectID}">
+    `<tr class="project-row" id="{projectID}">
         <td class="project-name">{projectName}</td>
         <td class="time-studied">{timeStudied}</td>
         <td class="min-time">{minRemaining}</td>
