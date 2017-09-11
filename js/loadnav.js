@@ -302,6 +302,89 @@ function InsertProjectGoals(projectName, minimumGoal, idealGoal, deleted, callba
 
 
 
+/////                   Insert Last Weeks Project Goals
+/////                           Insert non-deleted rows into columns A, B, C, D and E
+/////
+function InsertLastWeeksProjectGoals(ajaxData){
+    console.log("++ajax data");
+    console.log(ajaxData);
+    rows = ajaxData.values;
+
+    var rowCount = 0;
+    var newRows = [];
+
+    for(var i in rows){
+        if(rows[i][4] == "FALSE"){
+            newRows[rowCount] = rows[i];
+            rowCount ++;
+        }
+    }
+
+    if(rowCount == 0){
+        console.log("Last week had zero projects, nothing to bring over.");
+    }
+    console.log(newRows);
+
+    // TODO: how do I batch insert?
+    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + getCookie(USERDATA_SHEET_ID) + "/values/" + SheetName() + "!A1:E" + rowCount + ":append?valueInputOption=RAW&access_token=" + getCookie(OAUTH_TOKEN);
+
+    console.log("the url is: " + url);
+
+    var front = 
+    `
+    {
+        "values": 
+            [\n`;
+    var end=
+    `
+            ]
+    }`;
+
+    var ajax_data = front;
+
+    for(var i in newRows){
+        ajax_data += '                  [';
+        ajax_data += '"' + newRows[i][0] + '", ';
+        ajax_data += '"' + newRows[i][1] + '", ';
+        ajax_data += '"' + newRows[i][2] + '", ';
+        ajax_data += '"' + newRows[i][3] + '", ';
+        ajax_data += '"' + newRows[i][4] + '"';
+        ajax_data += ']';
+        if(i < rowCount - 1){
+            ajax_data += ',\n';
+        }
+    }
+
+    //var row= `       ["{projectID}", "{projectName}", "{minimumGoal}", "{idealGoal}", "{deleted}"]`
+    ajax_data += end;
+    console.log("ajax data created is:");
+    console.log(ajax_data);
+
+    // Execute the API request.
+    $.ajax({
+        contentType: 'application/json',
+        dataType: 'json',
+        data: ajax_data,
+        type: 'POST',
+        url: url, 
+        success: function(ajaxData){
+            console.log("Insert last weeks projects into sheet success");
+            console.log(ajaxData);
+        },
+        error: function(ajaxData){
+            console.log("Insert last weeks projects into sheet failure");
+            console.log(ajaxData);
+        },
+    });
+}
+
+
+
+
+
+
+
+
 /////                   Insert Project Goals Header
 /////                           Insert the header row into columns A, B, C, D and E
 /////
@@ -328,6 +411,7 @@ function InsertProjectGoalsHeader(){
         success: function(ajaxData){
             console.log("Insert header row into sheet success");
             console.log(ajaxData);
+            ReadLastWeeksProjectGoals(InsertLastWeeksProjectGoals); 
         },
         error: function(ajaxData){
             console.log("Insert header row into sheet failure");
@@ -367,6 +451,40 @@ function ReadProjectGoals(callback){
             console.log("Get project goals failure");
             console.log(data);
             callback(data);
+        },
+    });
+}
+
+
+
+
+
+
+
+
+/////                   ReadLastWeeksProjectGoals
+/////
+/////
+function ReadLastWeeksProjectGoals(insertionCallback){
+    var access_token = getCookie(OAUTH_TOKEN);
+    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + getCookie(USERDATA_SHEET_ID) + "/values/" + LastWeeksSheetName() + "!A2:E?access_token=" + access_token;
+    console.log("the url is: " + url);
+
+
+    // Execute the API request.
+    $.ajax({
+        contentType: 'application/json',
+        dataType: 'json',
+        type: 'GET',
+        url: url, 
+        success: function(data){
+            console.log("Get last weeks project goals success, sheetname: " + LastWeeksSheetName());
+            console.log(data);
+            insertionCallback(data);
+        },
+        error: function(data){
+            console.log("Get last weeks project goals failure, sheetname: " + LastWeeksSheetName());
+            console.log(data);
         },
     });
 }
@@ -544,7 +662,6 @@ function CreateSheet(){
         url: url, 
         success: function(data){
             console.log("Create work sheet success");
-            console.log(data);
             InsertStudyTime("Project ID", "Study Duration (H:M:S)");
             InsertProjectGoalsHeader();
         },
@@ -562,8 +679,8 @@ function CreateSheet(){
 
 
 
-/////                   Week Of Month
-/////                           Returns the week of the current month
+/////                   LastSunday
+/////                       Returns the day of the month for the most recent sunday 
 /////
 function LastSunday(){
     var d = new Date();
@@ -578,12 +695,42 @@ function LastSunday(){
 
 
 
+/////                   LastSunday
+/////                           Returns the sunday previous to last sunday
+/////
+function LastLastSunday(){
+    var d = new Date();
+    d.setDate(d.getDate() - d.getDay() - 7);
+    return d.getDate();
+}
+
+
+
+
+
+
+
+
+/////                   LastWeeksSheetName
+/////                           Generate last weeks sheet name
+/////
+function LastWeeksSheetName(){
+    var d = new Date();
+    return d.getFullYear().toString() + "-" + (d.getMonth() + 1).toString().padStart(2, '0') + "-" + LastLastSunday();
+}
+
+
+
+
+
+
+
+
 /////                   Sheet Name
 /////                           Generate the name that this weeks sheet will be given
 /////
 function SheetName(){
     var d = new Date();
-
     return d.getFullYear().toString() + "-" + (d.getMonth() + 1).toString().padStart(2, '0') + "-" + LastSunday();
 }
 

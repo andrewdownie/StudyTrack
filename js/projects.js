@@ -45,9 +45,11 @@ $(document).ready(function(){
         UpdateProjectGoal(editProjectID, curName, curMinTime, curIdealTime, deleted.toString(), projectRow, function(){
             if(deleted.toString() == "true"){
                 $("#" + editProjectID).addClass("text-red");
+                alert("Your project will not be brought over to next week.");
             }
             else{
                 $("#" + editProjectID).removeClass("text-red");
+                alert("Your project will once again be brought over to next week.");
             }
         });
 
