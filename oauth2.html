@@ -10,7 +10,8 @@
         id_token = id_token.split("#")[1];
         id_token = id_token.split("=")[1];
 
-        alert("MEOW: " + id_token);
+        //alert("MEOW: " + id_token);
+        setCookie("OAUTH_TOKEN", id_token);
     </script>
 </head>
 
