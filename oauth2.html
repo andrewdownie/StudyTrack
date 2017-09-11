@@ -3,6 +3,7 @@
 
 <head>
     <script src="js/cookie.js"></script>
+    <script src="js/loadnav.js"></script>
 
     <script>
         var url = window.location.toString();
@@ -12,6 +13,7 @@
 
         //alert("MEOW: " + id_token);
         setCookie("OAUTH_TOKEN", id_token);
+        Redirect("index.html");
     </script>
 </head>
 
