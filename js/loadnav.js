@@ -101,23 +101,50 @@ function initClient() {
     }
 
     var API_KEY = 'AIzaSyDPpbEG8KS9Eu3-yrx9TAlCqaCaCVNCN48';
-    var CLIENT_ID = '794809467159-f7ngrrspdm6vkma7b6e898d7et7j4p1u.apps.googleusercontent.com';
-    var SCOPE = 'https://www.googleapis.com/auth/drive.file';
-    var DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest';
+    var CLIENT_ID = encodeURI('794809467159-f7ngrrspdm6vkma7b6e898d7et7j4p1u.apps.googleusercontent.com');
+    var SCOPE = encodeURI('https://www.googleapis.com/auth/drive.file');
+    var DISCOVERY_DOC = encodeURI('https://www.googleapis.com/discovery/v1/apis/drive/v3/rest');
 
 
     gapi.client.init({
         'apiKey': API_KEY,
         'clientId': CLIENT_ID,
         'scope': SCOPE,
-        'discoveryDocs': [DISCOVERY_DOC],
-        'ux_mode': 'redirect',
-        'redirect_uri': BuildRedirectString("oauth2.html")
+        'discoveryDocs': [DISCOVERY_DOC]
     }).then(function () {
         GoogleAuth = gapi.auth2.getAuthInstance();
         
         SignInWrapper();
     });
+
+    /*gapi.client.init({
+        'apiKey': API_KEY,
+        'clientId': CLIENT_ID,
+        'scope': SCOPE,
+        'discoveryDocs': [DISCOVERY_DOC],
+        'ux_mode': 'redirect',
+        'redirect_uri': BuildRedirectString("oauth2.html"),
+        'response_type': 'token'
+    }).then(function () {
+        GoogleAuth = gapi.auth2.getAuthInstance();
+        
+        SignInWrapper();
+    });*/
+
+
+    /*var url = `https://accounts.google.com/o/oauth2/v2/auth?
+    scope={scope}&
+    include_granted_scopes=true&
+    redirect_uri={redirect_uri}&
+    response_type=token&
+    discoveryDocs={discovery_docs}&
+    client_id={client_id}`;
+
+
+    url = url.replace("{scope}", SCOPE);
+    url = url.replace("{redirect_uri}", encodeURI(BuildRedirectString("oauth.html")));
+    url = url.replace("{client_id}", CLIENT_ID);
+    url = url.replace("{discovery_docs}", DISCOVERY_DOC);*/
 }
 
 
