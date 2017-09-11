@@ -45,11 +45,9 @@ $(document).ready(function(){
         UpdateProjectGoal(editProjectID, curName, curMinTime, curIdealTime, deleted.toString(), projectRow, function(){
             if(deleted.toString() == "true"){
                 $("#" + editProjectID).addClass("text-red");
-                alert("Your project will not be brought over to next week.");
             }
             else{
                 $("#" + editProjectID).removeClass("text-red");
-                alert("Your project will once again be brought over to next week.");
             }
         });
 
@@ -63,14 +61,45 @@ $(document).ready(function(){
         var newName = $("#edit-project-name").val();
         var newMinTime = $("#edit-minimum-time").val();
         var newIdealTime = $("#edit-ideal-time").val();
-        var deleted = $().val();
+        var deleted = $("#delete-project").val();
+        var projectRow = FindProjectRowNum(editProjectID);
 
-        if(ValidProjectName(newName) == false){
-            alert("Project names can only contain letters, numbers, underscores and dashes.");
+
+        if(newName == ""){
+            $("#edit-project-error-message").text("Project name cannot be blank");
             return;
         }
 
-        var projectRow = FindProjectRowNum(editProjectID);
+
+        if(newMinTime > newIdealTime){
+            $("#edit-project-error-message").text("Ideal time cannot be less than minimum time.");
+            return;
+        }
+
+
+        /*var projectAlreadyExists = false; //TODO: not sure how to handle editing projects and preventing projects with the same name, as if you want to save it with the name it started with, it will be considered already existing. Will come back to this later
+        $(".project-name").each(function(){
+            row ++;
+            if(newName == $(this).text()){
+                projectAlreadyExists = true;
+            }
+        });
+
+        if(projectAlreadyExists == true){
+            $("#edit-project-error-message").text("Project with this name already exists.");
+            return;
+        }*/
+
+
+
+        if(ValidProjectName(newName) == false){
+            $("#edit-project-error-message").text("Project names can only contain letters, number, spaces, underscores and dashes.");
+            return;
+        }
+
+
+
+
         UpdateProjectGoal(editProjectID, newName, newMinTime, newIdealTime, deleted, projectRow, function(){
             $("#" + editProjectID + " .project-name").text(newName);
             $("#" + editProjectID + " .min-time").text(newMinTime);
@@ -136,13 +165,13 @@ function SetupNewProject(){
         var idealTime = parseInt($("#ideal-time").val());
 
         if(projectName == ""){
-            alert("Project name cannot be blank");
+            $("#add-project-error-message").text("Project name cannot be blank");
             return;
         }
 
 
         if(minimumTime > idealTime){
-            alert("Ideal time cannot be less than minimum time.");
+            $("#add-project-error-message").text("Ideal time cannot be less than minimum time.");
             return;
         }
 
@@ -155,14 +184,14 @@ function SetupNewProject(){
         });
 
         if(projectAlreadyExists == true){
-            alert("Project with this name already exists.");
+            $("#add-project-error-message").text("Project with this name already exists.");
             return;
         }
 
 
 
         if(ValidProjectName(projectName) == false){
-            alert("Project names can only contain letters, numbers, spaces, underscores and dashes.");
+            $("#add-project-error-message").text("Project names can only contain letters, number, spaces, underscores and dashes.");
             return;
         }
 

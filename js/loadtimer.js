@@ -53,13 +53,37 @@ $(document).ready(function(){
 
             if(timerStatus != "running"){
                 $("#set-timer-modal").modal('show');
+                if(tickSound30 != null){
+                    tickSound30.pause();
+                }
             }
             else{
-                setCookie("TIMER_STATUS", "idle");
-                DisplayTimerStatus();
+                $("#stop-timer-modal").modal('show');
             }
+        });
+
+
+
+        ///
+        /// Stop Timer
+        ///
+        $("#stop-timer").click(function(){
+            setCookie("TIMER_STATUS", "idle");
+            DisplayTimerStatus();
+
             if(tickSound30 != null){
                 tickSound30.pause();
+            }
+        });
+
+
+
+        ///
+        /// Resume Timer
+        ///
+        $("#resume-timer").click(function(){
+            if(tickSound30 != null){
+                tickSound30.play();
             }
         });
 
@@ -199,7 +223,7 @@ function ValidTimerInputs(){
     var minutes = $("#minutes").val();
 
     if(hours == 0 && minutes == 0){
-        alert("Duration of timer cannot be zero.");
+        $("#set-timer-error-message").text("Duration of timer cannot be zero.");
         return false;
     }
 
@@ -210,7 +234,7 @@ function ValidTimerInputs(){
     var project = $("#selected-project").val();
 
     if(project == "Select a project..."){
-        alert("You must select a project");
+        $("#set-timer-error-message").text("You must select a project.");
         return false;
     }
 

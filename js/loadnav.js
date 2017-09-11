@@ -266,6 +266,8 @@ function InsertProjectGoals(projectName, minimumGoal, idealGoal, deleted, callba
     `;
     
     var projectID = (Math.random()*1e32).toString(36);
+    projectID = projectID.replace("(", "");
+    projectID = projectID.replace(")", "");
     console.log("Project ID is: " + projectID);
 
     ajax_data = ajax_data.replace("{projectID}", projectID);
@@ -853,4 +855,34 @@ function SetActiveLink(){
 
     var activeLinkID = url_navlink_dict[urlEnd];
     $("#" + activeLinkID).addClass("active");
+}
+
+
+
+
+
+
+
+
+/////                   ShowMessageModal
+/////
+/////
+function ShowMessageModal(modalTitle, modalMessage){
+    $("#message-modal .modal-title").text(modalTitle); 
+    $("#message-modal .modal-body").text(modalMessage); 
+    $("#message-modal").modal("show");
+}
+
+
+
+
+
+
+
+
+/////                   HideMessageModal
+/////
+/////
+function HideMessageModal(){
+    $("#message-modal").modal("hide");
 }

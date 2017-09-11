@@ -77,6 +77,10 @@
                         </div>
 
                     </div>
+                    <div class="row text-red">
+                        <div id="set-timer-error-message" class="col-lg-12">
+                        </div>
+                    </div>
                 </div>
 
                 <div class="modal-footer">
@@ -118,6 +122,26 @@
                     </div>
                 </div>
 
+            </div>
+        </div>
+    </div>
+
+<!-- Canel Timer Modal -->
+    <div class="modal fade" id="stop-timer-modal" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Confirm Stopping the Timer</h4>
+                </div>
+
+                <div class="modal-body">
+                    WARNING: If you cancel this timer, you will lose all timer progress!
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-warning" id="stop-timer" data-dismiss="modal">Stop Timer</button>
+                </div>
             </div>
         </div>
     </div>
