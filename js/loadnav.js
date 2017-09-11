@@ -38,8 +38,14 @@ var currentApiRequest = false;
 $(document).ready(function(){
     var OAuthCookie = getCookie(OAUTH_TOKEN);
 
+    if(CheckUrlEnd("oauth2.html")){
+        var tokenFromQuery;
+        alert(tokenFromQuery);
+        setCookie(OAUTH_TOKEN, tokenFromQuery); 
+    }
 
-    if(OAuthCookie == "" && !CheckPath("login.html")){
+
+    if(OAuthCookie == "" && !CheckUrlEnd("login.html")){
         Redirect("login.html");
         return;
     }
@@ -125,7 +131,7 @@ function initClient() {
             'scope': SCOPE,
             'discoveryDocs': [DISCOVERY_DOC],
             'ux_mode': 'redirect',
-            'redirect_uri': BuildRedirectString("index.html")
+            'redirect_uri': BuildRedirectString("oauth2.html")
         }).then(function () {
             GoogleAuth = gapi.auth2.getAuthInstance();
             
@@ -157,7 +163,7 @@ function SignInWrapper(){
             setCookieEpoch(OAUTH_TOKEN, isSignedIn.Zi.access_token, isSignedIn.Zi.expires_at);
             var oauthCookie = getCookie(OAUTH_TOKEN);
 
-            if(oauthCookie != "" && typeof oauthCookie != 'undefined' && CheckPath("login.html")){
+            if(oauthCookie != "" && typeof oauthCookie != 'undefined' && CheckUrlEnd("login.html")){
                 Redirect("index.html");
                 console.log("the user has signed in, go to index.html");
                 return;
@@ -830,7 +836,7 @@ function UpdateProjectGoal(projectID, newName, newMinTime, newIdealTime, newDele
 /////
 /////
 function BuildRedirectString(urlEnd){
-    var path = window.location.pathname;
+    var path = window.location.toString();
     var pathSplit = path.split("/");
     var pathRebuilt = "";
 
@@ -867,7 +873,7 @@ function Redirect(urlEnd){
 /////                   CheckPage
 /////                           : gets the last part of the current url, and checks the passed in string to see if they are the same.
 /////
-function CheckPath(checkUrl){
+function CheckUrlEnd(checkUrl){
     var path = window.location.pathname;
     var pathSplit = path.split("/");
     var urlEnd = pathSplit[pathSplit.length - 1];
