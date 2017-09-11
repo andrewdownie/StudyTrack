@@ -4,6 +4,7 @@
 <head>
     <script src="js/cookie.js"></script>
     <script src="js/loadnav.js"></script>
+    <script src="https://apis.google.com/js/client.js"></script>
 
     <script>
         var url = window.location.toString();
@@ -13,7 +14,36 @@
 
         //alert("MEOW: " + id_token);
         setCookie("OAUTH_TOKEN", id_token);
-        Redirect("index.html");
+        //Redirect("index.html");
+
+
+        //TODO: I DONT KNOW WHAT IM DOING, AND I CANT TEST THIS LOCALLY, PLEASE SEND HELP
+    GoogleAuth.signIn()
+    .then(function(isSignedIn){
+        alert("Google auth then bbq");
+        var currentTime = (new Date).getTime();
+        oauth_expireTime = isSignedIn.Zi.expires_at
+
+
+                //console.log(isSignedIn.Zi.access_token);
+
+        if(currentTime < oauth_expireTime){
+            setCookieEpoch(OAUTH_TOKEN, isSignedIn.Zi.access_token, isSignedIn.Zi.expires_at);
+            var oauthCookie = getCookie(OAUTH_TOKEN);
+
+            if(oauthCookie != "" && typeof oauthCookie != 'undefined' && CheckUrlEnd("login.html")){
+                Redirect("index.html");
+                console.log("the user has signed in, go to index.html");
+                return;
+            }
+            else{
+                console.log("The user has failed to sign in.");
+            }
+        }
+        else{
+            console.log("the user is not logged in")
+        }
+    });
     </script>
 </head>
 
