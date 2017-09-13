@@ -1,0 +1,114 @@
+<html>
+  <head></head>
+  <body>
+    <div style="padding: 50px">
+        <h2 style="color: #2196f3;">Status: <span id='status'></span></h2>
+        <button id="signin-button" onclick="handleSignInClick()">Sign In</button>
+        <button id="signout-button" onclick="handleSignOutClick()">Sign Out</button>
+        <button id="signout-button" onclick="openFile()">Open File</button>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript">
+    var cid = '<CLIENTID_HERE>';
+    var scope = 'https://www.googleapis.com/auth/drive';
+    var authenticated = false;
+    var pickerLoaded = false;
+    var auth = null;
+    var user = null;
+    var response = null;
+    var token = null;
+    var stat = $('#status');
+
+      function openFile() {
+        gapi.load('client:auth2', initClient);
+        gapi.load('picker', onPickerLoad);
+      }
+
+        function initClient() {
+            stat.html("starting");
+
+            gapi.client.init({
+                clientId: cid,
+                scope: scope
+            }).then(
+            function () {
+                console.log("init");
+
+                // Check if we are logged in.
+                auth = gapi.auth2.getAuthInstance();
+                auth.isSignedIn.listen(onStatusChange);
+                authenticated = auth.isSignedIn.get();
+                stat.html(authenticated);
+
+                if (authenticated) {
+                    stat.html("Logged In!");
+                    user = auth.currentUser.get();
+                    response = user.getAuthResponse(true);
+                    token = response.access_token;
+                    showPicker();
+                } else {
+                    stat.html("Logged Out!");
+                }
+            }, function(){stat.html("error")});
+        }
+
+        function onStatusChange(isSignedIn) {
+            if (isSignedIn) {
+                stat.html("Logged In!");
+                authenticated = true;
+                user = auth.currentUser.get();
+                response = user.getAuthResponse(true);
+                token = response.access_token;
+                showPicker();
+                showPicker();
+            } else {
+                authenticated = false;
+                stat.html("Logged Out!");
+
+            }
+        }
+
+        function handleSignInClick(event) {
+            gapi.auth2.getAuthInstance().signIn();
+        }
+
+        function handleSignOutClick(event) {
+            gapi.auth2.getAuthInstance().signOut();
+            alert("signed out");
+        }
+
+
+        function onPickerLoad() {
+            pickerLoaded = true;
+            showPicker();
+        }
+
+        function showPicker() {
+            if (pickerLoaded && authenticated) {
+                var view = new google.picker.View(google.picker.ViewId.DOCS);
+                var picker = new google.picker.PickerBuilder();
+                picker.addView(view);
+                picker.enableFeature(google.picker.Feature.MULTISELECT_ENABLED);
+                picker.setOAuthToken(token);
+                picker.setAppId()
+                picker.setCallback(onDriveFileOpen);
+                picker = picker.build();
+                picker.setVisible(true);
+            }
+        }
+
+        function onDriveFileOpen(data) {
+            console.log(data);
+            if (data.action == google.picker.Action.PICKED) {
+                var fileId = data.docs[0].id;
+                console.log(fileId);
+                alert(data.docs[0].name);
+            }
+        }
+
+    </script>
+    <script async defer src="https://apis.google.com/js/api.js">
+    </script>
+  </body>
+</html>

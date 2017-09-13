@@ -1,6 +1,9 @@
 var tickSound30;
 var alarmSound;
 
+
+var lastLoginRefreshMinutes;
+
 $(document).ready(function(){
     $.get("timerbar.html", function(navbarHtml){
         $("body").append(navbarHtml);
@@ -19,6 +22,7 @@ $(document).ready(function(){
         ///
         //$("#timer-time").text(FormatTimerTime(RemainingTimeMS()));
         if(getCookie("TIMER_STATUS") == "running"){
+            lastLoginRefreshMinutes = -5;
             RunProjectTimer();
             $("#favicon").attr("href","clock.png");
         }
@@ -112,6 +116,7 @@ $(document).ready(function(){
                 setCookie("TIMER_STATUS", "running");
                 setCookie("TIMER_START_TIME", moment(new Date()));
                 setCookie("TIMER_END_TIME", endTime);
+                lastLoginRefreshMinutes = -5;
                 RunProjectTimer();
                 DisplayTimerStatus();
 
@@ -430,10 +435,23 @@ function RunProjectTimer(){
                 }
             }
 
+            //
+            // Expensive way to keep user logged in during a timer
+            //
+            var curMinutes = new Date().getMinutes();
+            console.log(curMinutes);
+            if(lastLoginRefreshMinutes != curMinutes && Math.abs(lastLoginRefreshMinutes - curMinutes) >= 5){
+                lastLoginRefreshMinutes = curMinutes;
+                //SignInWrapper();
+                gapi.load('client:auth2', initClient);
+                console.log("refreshing login now --------");
+            }
+
 
             $("#timer-time").text(FormatTimerTime(remainingTime));
 
             if(remainingTime.as('milliseconds') > 0){
+                lastLoginRefreshMinutes = -5;
                 RunProjectTimer();
             }
         }

@@ -160,28 +160,21 @@ function initClient() {
 function SignInWrapper(){
     GoogleAuth.signIn()
     .then(function(isSignedIn){
-        var currentTime = (new Date).getTime();
-        oauth_expireTime = isSignedIn.Zi.expires_at
+        var oauth_expireTime = isSignedIn.Zi.expires_at
 
+        setCookieEpoch(OAUTH_TOKEN, isSignedIn.Zi.access_token, oauth_expireTime);
+        console.log("Login expires: " + oauth_expireTime);
+        var oauthCookie = getCookie(OAUTH_TOKEN);
 
-                //console.log(isSignedIn.Zi.access_token);
-
-        if(currentTime < oauth_expireTime){
-            setCookieEpoch(OAUTH_TOKEN, isSignedIn.Zi.access_token, isSignedIn.Zi.expires_at);
-            var oauthCookie = getCookie(OAUTH_TOKEN);
-
-            if(oauthCookie != "" && typeof oauthCookie != 'undefined' && CheckUrlEnd("login.html")){
-                Redirect("index.html");
-                console.log("the user has signed in, go to index.html");
-                return;
-            }
-            else{
-                console.log("The user has failed to sign in.");
-            }
+        if(oauthCookie != "" && typeof oauthCookie != 'undefined' && CheckUrlEnd("login.html")){
+            Redirect("index.html");
+            console.log("the user has signed in, go to index.html");
+            return;
         }
         else{
-            console.log("the user is not logged in")
+            console.log("The user has failed to sign in.");
         }
+
     });
 }
 
@@ -953,4 +946,4 @@ function HideMessageModal(){
 ///// https://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript#answer-14810325
 function loadPageVar (sVar) {
     return unescape(window.location.search.replace(new RegExp("^(?:.*[&\\?]" + escape(sVar).replace(/[\.\+\*]/g, "\\$&") + "(?:\\=([^&]*))?)?.*$", "i"), "$1"));
-  }
+}

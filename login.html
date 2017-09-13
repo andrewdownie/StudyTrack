@@ -34,7 +34,14 @@
 
     <!-- JS Imports -->
     <script src="js/cookie.js"></script>
-    <script src="https://apis.google.com/js/client.js"></script>
+    <!--<script src="https://apis.google.com/js/client.js"></script>-->
+    <script>
+        function handleClientLoad() { 
+            window.setTimeout(gapi.auth.init,1); 
+            //console.log("handleClientLoad was called");
+        }
+    </script>
+    <script type="text/javascript" src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>
     <script src="js/loadnav.js"></script>
     <script src="js/login.js"></script>
 
