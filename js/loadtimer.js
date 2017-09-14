@@ -438,7 +438,7 @@ function RunProjectTimer(){
             // Expensive way to keep user logged in during a timer
             //
             var curMinutes = new Date().getMinutes();//TODO: lastLoginRefreshMinutes is always negative 5?
-            if(lastLoginRefreshMinutes != curMinutes && Math.abs(lastLoginRefreshMinutes - curMinutes) >= 5){
+            if(lastLoginRefreshMinutes != curMinutes && Math.abs(lastLoginRefreshMinutes - curMinutes) >= 30){
                 lastLoginRefreshMinutes = curMinutes;
                 gapi.load('client:auth2', initClient);
                 console.log("Refreshing google login now"); 
