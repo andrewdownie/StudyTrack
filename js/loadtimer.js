@@ -20,7 +20,6 @@ $(document).ready(function(){
         ///
         /// Start the timer right away, in case it should already be running
         ///
-        //$("#timer-time").text(FormatTimerTime(RemainingTimeMS()));
         if(getCookie("TIMER_STATUS") == "running"){
             lastLoginRefreshMinutes = -5;
             RunProjectTimer();
@@ -438,20 +437,17 @@ function RunProjectTimer(){
             //
             // Expensive way to keep user logged in during a timer
             //
-            var curMinutes = new Date().getMinutes();
-            console.log(curMinutes);
+            var curMinutes = new Date().getMinutes();//TODO: lastLoginRefreshMinutes is always negative 5?
             if(lastLoginRefreshMinutes != curMinutes && Math.abs(lastLoginRefreshMinutes - curMinutes) >= 5){
                 lastLoginRefreshMinutes = curMinutes;
-                //SignInWrapper();
                 gapi.load('client:auth2', initClient);
-                console.log("refreshing login now --------");
+                console.log("Refreshing google login now"); 
             }
 
 
             $("#timer-time").text(FormatTimerTime(remainingTime));
 
             if(remainingTime.as('milliseconds') > 0){
-                lastLoginRefreshMinutes = -5;
                 RunProjectTimer();
             }
         }
