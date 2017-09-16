@@ -136,11 +136,30 @@
                 </div>
 
                 <div class="modal-body">
-                    WARNING: If you cancel this timer, you will lose all timer progress!
+                    <div class="row">
+                        <div class="col-xs-12 text-left">
+                            WARNING: If you cancel this timer, you will lose all timer progress!
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 text-right">
+                            <button type="button" class="btn btn-danger" id="stop-timer" data-dismiss="modal">Stop Timer</button>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" id="stop-timer" data-dismiss="modal">Stop Timer</button>
+                    <div class="row">
+
+                        <div class="col-xs-4 text-right modal-label">
+                            <p>Volume:</p>
+                        </div>
+
+                        <div class="col-xs-8">
+                            <p><input id="timer-volume-slider" type="range" min="0" max="1" value="0.50" step="0.05" /></p>
+                        </div>
+
+                    </div>
                 </div>
             </div>
         </div>

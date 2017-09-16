@@ -10,21 +10,38 @@ $(document).ready(function(){
 
 
         if(tickSound30 == null){
-            //tickSound30 = new Audio("tickSound30.mp3");
             tickSound30 = document.getElementById("audio-tickSound30");
             tickSound30.addEventListener('ended', function() {
                 this.currentTime = 0;
                 this.play();
             }, false);
         }
+
+        // Set timer volume to whats saved in the cookie
+        var vol = getCookie("TIMER_VOLUME");
+        if(vol == ""){
+            vol = 0.5;
+            setCookie("TIMER_VOLUME", vol);
+        }
+        $("#timer-volume-slider").val(vol);
+        tickSound30.volume = vol;
+
         if(alarmSound == null){
-            //alarmSound = new Audio("alarmSound.mp3");
             alarmSound = document.getElementById("audio-alarmSound");
             alarmSound.addEventListener('ended', function() {
                 this.currentTime = 0;
                 this.play();
             }, false);
         }
+
+
+        ///
+        ///
+        ///
+        $("#timer-volume-slider").on("change", function(){
+            setCookie("TIMER_VOLUME", $(this).val());
+            tickSound30.volume = $(this).val();
+        });
 
 
         ///

@@ -117,34 +117,6 @@ function initClient() {
         SignInWrapper();
     });
 
-    /*gapi.client.init({
-        'apiKey': API_KEY,
-        'clientId': CLIENT_ID,
-        'scope': SCOPE,
-        'discoveryDocs': [DISCOVERY_DOC],
-        'ux_mode': 'redirect',
-        'redirect_uri': BuildRedirectString("oauth2.html"),
-        'response_type': 'token'
-    }).then(function () {
-        GoogleAuth = gapi.auth2.getAuthInstance();
-        
-        SignInWrapper();
-    });*/
-
-
-    /*var url = `https://accounts.google.com/o/oauth2/v2/auth?
-    scope={scope}&
-    include_granted_scopes=true&
-    redirect_uri={redirect_uri}&
-    response_type=token&
-    discoveryDocs={discovery_docs}&
-    client_id={client_id}`;
-
-
-    url = url.replace("{scope}", SCOPE);
-    url = url.replace("{redirect_uri}", encodeURI(BuildRedirectString("oauth.html")));
-    url = url.replace("{client_id}", CLIENT_ID);
-    url = url.replace("{discovery_docs}", DISCOVERY_DOC);*/
 }
 
 

@@ -78,7 +78,6 @@ function CalculateProjectTotals(data){
     /// Total Study Time spent on each project
     ///
     $('#dropdown-insertion .project-choice').each(function () { 
-        //console.log($(this).text() + " : " + this.id);
 
         projectArray[currentProjectNum] = new Object();
         projectArray[currentProjectNum].name = $(this).text();
@@ -96,8 +95,10 @@ function CalculateProjectTotals(data){
             }
         }
 
+        
         currentProjectNum += 1;
     });
+    console.log("Time spent on each project is:");
     console.log(projectArray);
 
 
