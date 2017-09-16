@@ -78,6 +78,7 @@ $(document).ready(function(){
             $("#timer-finished-modal").modal("hide");
             setCookie("TIMER_STATUS", "IDLE");
             DisplayTimerStatus();
+            alarmSound.pause();
         });
 
 
@@ -171,9 +172,11 @@ $(document).ready(function(){
         ///
         $("#fully-focused").click(function(){
             AddFocusTime(1); 
+            alarmSound.pause();
         });
         $("#less-than-fully-focused").click(function(){
             AddFocusTime(0.25);
+            alarmSound.pause();
         });
 
 
