@@ -10,10 +10,20 @@ $(document).ready(function(){
 
 
         if(tickSound30 == null){
-            tickSound30 = new Audio("tickSound30.mp3");
+            //tickSound30 = new Audio("tickSound30.mp3");
+            tickSound30 = document.getElementById("audio-tickSound30");
+            tickSound30.addEventListener('ended', function() {
+                this.currentTime = 0;
+                this.play();
+            }, false);
         }
         if(alarmSound == null){
-            alarmSound = new Audio("alarmSound.mp3");
+            //alarmSound = new Audio("alarmSound.mp3");
+            alarmSound = document.getElementById("audio-alarmSound");
+            alarmSound.addEventListener('ended', function() {
+                this.currentTime = 0;
+                this.play();
+            }, false);
         }
 
 
