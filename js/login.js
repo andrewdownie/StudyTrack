@@ -1,4 +1,6 @@
 $(document).ready(function(){
+    gapi.load('client:auth2', initClient);
+    /*
     $("#login").click(function(){
         //somehow I need to call window.open here, and then pass the google popup into that?
         //window.open("", "");
@@ -9,4 +11,9 @@ $(document).ready(function(){
         gapi.load('client:auth2', initClient);
 
     });
+    */
 });
+
+function LoginPopup(){
+    SignInWrapper();
+}

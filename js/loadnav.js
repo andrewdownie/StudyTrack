@@ -114,7 +114,6 @@ function initClient() {
     }).then(function () {
         GoogleAuth = gapi.auth2.getAuthInstance();
         
-        SignInWrapper();
     });
 
 }
