@@ -59,9 +59,9 @@ $(document).ready(function(){
 
     $("#update-project").click(function(){
         var newName = $("#edit-project-name").val();
-        var newMinTime = $("#edit-minimum-time").val();
-        var newIdealTime = $("#edit-ideal-time").val();
-        var deleted = $("#delete-project").val();
+        var newMinTime = parseInt($("#edit-minimum-time").val());
+        var newIdealTime = parseInt($("#edit-ideal-time").val());
+        var deleted = $("#delete-project").is(":checked");
         var projectRow = FindProjectRowNum(editProjectID);
 
 
@@ -100,7 +100,7 @@ $(document).ready(function(){
 
 
 
-        UpdateProjectGoal(editProjectID, newName, newMinTime, newIdealTime, deleted, projectRow, function(){
+        UpdateProjectGoal(editProjectID, newName, newMinTime, newIdealTime, deleted.toString(), projectRow, function(){
             $("#" + editProjectID + " .project-name").text(newName);
             $("#" + editProjectID + " .min-time").text(newMinTime);
             $("#" + editProjectID + " .ideal-time").text(newIdealTime);
@@ -243,7 +243,7 @@ function AddProjectRow(ajaxData, projectID, projectName, weeklyMin, weeklyGoal, 
     row = row.replace("{weeklyGoal}", weeklyGoal);
     row = row.replace("{buttonID}", "delete-" + projectID);
 
-    if(deleted == "TRUE"){
+    if(deleted == "TRUE" || deleted == "true"){
         row = row.replace("{deleted}", 'class="text-red"');
     }
     else{

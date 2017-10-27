@@ -766,21 +766,25 @@ function UpdateProjectGoal(projectID, newName, newMinTime, newIdealTime, newDele
 
     console.log("the update url is: " + url);
 
+
     var ajax_data = 
     `
     {
-        "values": [["{projectID}", "{projectName}", "{minimumGoal}", "{idealGoal}", {deleted}]]
+        "values": [["{projectID}", "{projectName}", "{minimumGoal}", "{idealGoal}", "{deleted}"]]
     } 
     `;
     
-    var projectID = (Math.random()*1e32).toString(36);
-    console.log("Project ID is: " + projectID);
+    //var projectID = (Math.random()*1e32).toString(36);
+    //console.log("Project ID is: " + projectID);
 
     ajax_data = ajax_data.replace("{projectID}", projectID);
     ajax_data = ajax_data.replace("{projectName}", newName);
     ajax_data = ajax_data.replace("{minimumGoal}", newMinTime);
     ajax_data = ajax_data.replace("{idealGoal}", newIdealTime);
-    ajax_data = ajax_data.replace("{deleted}", newDeleted.toString());
+    ajax_data = ajax_data.replace("{deleted}", newDeleted);
+
+
+    //alert(ajax_data)
 
 
     // Execute the API request.
@@ -791,12 +795,12 @@ function UpdateProjectGoal(projectID, newName, newMinTime, newIdealTime, newDele
         type: 'PUT',
         url: url, 
         success: function(ajaxData){
-            console.log("Insert row into sheet success");
+            console.log("update project goal success");
             console.log(ajaxData);
             callback(ajaxData, projectID, newName, newMinTime, newIdealTime);
         },
         error: function(ajaxData){
-            console.log("Insert row into sheet failure");
+            console.log("update project goal failure");
             console.log(ajaxData);
             callback(ajaxData, projectID, newName, newMinTime, newIdealTime);
         },
