@@ -456,6 +456,9 @@ function RunProjectTimer(){
                 remainingTime = moment.duration(0);
                 $("#timer-finished-modal").modal('show');
                 RunEndTimer();
+
+                $("#set-timer-modal").modal('hide');
+
                 if(tickSound30 != null){
                     tickSound30.pause();
                 }

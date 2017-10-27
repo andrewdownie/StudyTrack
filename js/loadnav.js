@@ -379,6 +379,8 @@ function InsertLastWeeksProjectGoals(ajaxData){
         success: function(ajaxData){
             console.log("Insert last weeks projects into sheet success");
             console.log(ajaxData);
+
+            location.reload();
         },
         error: function(ajaxData){
             console.log("Insert last weeks projects into sheet failure");
@@ -618,6 +620,7 @@ function ListSheets(){
 
             if(thisWeeksSheetFound == false){
                 console.log("We didnt find this weeks sheet, create it now");
+                $("#projects-table").append("<tr class='project-row'><td>Copying projects from last week, please wait...</td></tr>");
                 CreateSheet();
             }
             else{
