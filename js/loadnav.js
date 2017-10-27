@@ -17,7 +17,7 @@ var url_navlink_dict = {
 /////                   Variables
 /////
 /////
-var USER_DATA_SHEET_NAME = "StudyTrackUserData"
+var USERDATA_SHEET_NAME = "StudyTrackUserData"
 var OAUTH_TOKEN = "OAUTH_TOKEN";            // Name given to the users OAuth token cookie
 var oauth_expireTime;
 var USERDATA_SHEET_ID = "USERDATA_SHEET_ID"; // Name given to the users data sheet id cookie
@@ -45,13 +45,16 @@ $(document).ready(function(){
     }*/
 
 
+    // If the OAuthCookie is blank, and we're not on the login page,
+    //  -> redirect to the login page
     if(OAuthCookie == "" && !CheckUrlEnd("login.html")){
         Redirect("login.html");
         return;
     }
 
     
-
+    // If the OAuthCookie isn't undefined
+    //  -> update the navbar, and setup logout button event
     if(OAuthCookie != "" && typeof OAuthCookie != "undefined"){
         //console.log("---- check for ss");
         CheckForSS();
@@ -65,12 +68,7 @@ $(document).ready(function(){
             ///
             /// If logged in, set the current page as active in the navbar
             ///
-            //var activeLinkID = url_navlink_dict[window.location.pathname];
-            //$("#" + activeLinkID).addClass("active");
             SetActiveLink();
-
-
-
 
             $("#logout").click(function(){
                 setCookie(OAUTH_TOKEN, "", 0);
@@ -173,23 +171,27 @@ function CheckForSS(){
         success: function(data){
             console.log("Check for SS success");
             for(var i in data.files){
-                if(data.files[i].name == USER_DATA_SHEET_NAME){
+                if(data.files[i].name == USERDATA_SHEET_NAME){
                     matches = matches + 1;
                     lastFoundSheetID = data.files[i].id;
                 }
             }
 
             if(matches > 1){
-                console.error(matches + " sheets with name: " + USER_DATA_SHEET_NAME + " found! Uncertain what sheet will be loaded!");
+                console.error(matches + " sheets with name: " + USERDATA_SHEET_NAME + " found! Uncertain what sheet will be loaded!");
             }
 
 
             if(matches == 0){
                 console.log("Creating new user data sheet");
-                CreateSS(USER_DATA_SHEET_NAME);
+                CreateSS(USERDATA_SHEET_NAME);
             }
             else{
                 setCookie(USERDATA_SHEET_ID, lastFoundSheetID, oauth_expireTime);
+
+                var sheet_id = getCookie(USERDATA_SHEET_ID);
+                //alert("meow: " + sheet_id);
+
                 console.log("User data sheet already exists, no need to create it, we are going to use sheet: " + getCookie(USERDATA_SHEET_ID));
 
                 console.log("Loading worksheets...");
@@ -439,8 +441,13 @@ function InsertProjectGoalsHeader(){
 /////
 function ReadProjectGoals(callback){
     var access_token = getCookie(OAUTH_TOKEN);
-    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + getCookie(USERDATA_SHEET_ID) + "/values/" + SheetName() + "!A2:E?access_token=" + access_token;
-    console.log("the url is: " + url);
+
+    //TODO: THIS IS THE REASON, YES OMG. FIX NAOW PLS.
+    var sheet_id = getCookie(USERDATA_SHEET_ID);
+    //alert(sheet_id);
+
+    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + sheet_id + "/values/" + SheetName() + "!A2:E?access_token=" + access_token;
+    console.log("the read project goals url is: " + url);
 
 
     // Execute the API request.
