@@ -8,6 +8,10 @@ var url_navlink_dict = {
 }
 
 
+var API_KEY = 'AIzaSyDPpbEG8KS9Eu3-yrx9TAlCqaCaCVNCN48';
+var CLIENT_ID = encodeURI('794809467159-f7ngrrspdm6vkma7b6e898d7et7j4p1u.apps.googleusercontent.com');
+var SCOPE = encodeURI('https://www.googleapis.com/auth/drive.file');
+var DISCOVERY_DOC = encodeURI('https://www.googleapis.com/discovery/v1/apis/drive/v3/rest');
 
 
 
@@ -24,8 +28,6 @@ var USERDATA_SHEET_ID = "USERDATA_SHEET_ID"; // Name given to the users data she
 var GoogleAuth; // Google Auth object.
 var isAuthorized = false;
 var currentApiRequest = false;
-
-
 
 
 
@@ -98,12 +100,6 @@ function initClient() {
         return;
     }
 
-    var API_KEY = 'AIzaSyDPpbEG8KS9Eu3-yrx9TAlCqaCaCVNCN48';
-    var CLIENT_ID = encodeURI('794809467159-f7ngrrspdm6vkma7b6e898d7et7j4p1u.apps.googleusercontent.com');
-    var SCOPE = encodeURI('https://www.googleapis.com/auth/drive.file');
-    var DISCOVERY_DOC = encodeURI('https://www.googleapis.com/discovery/v1/apis/drive/v3/rest');
-
-
     gapi.client.init({
         'apiKey': API_KEY,
         'clientId': CLIENT_ID,
@@ -111,11 +107,9 @@ function initClient() {
         'discoveryDocs': [DISCOVERY_DOC]
     }).then(function () {
         GoogleAuth = gapi.auth2.getAuthInstance();
-        
     });
 
 }
-
 
 
 
@@ -130,6 +124,7 @@ function SignInWrapper(){
     GoogleAuth.signIn()
     .then(function(isSignedIn){
         var oauth_expireTime = isSignedIn.Zi.expires_at
+        console.log("new expirary time is: " + oauth_expireTime);
 
         setCookieEpoch(OAUTH_TOKEN, isSignedIn.Zi.access_token, oauth_expireTime);
         console.log("Login expires: " + oauth_expireTime);

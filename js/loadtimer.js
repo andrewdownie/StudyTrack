@@ -4,7 +4,14 @@ var alarmSound;
 
 var lastLoginRefreshMinutes;
 
+
 $(document).ready(function(){
+    if(getCookie("TIMER_STATUS") == "completed"){
+        //TODO: add the time here
+        AddFocusTime();
+        setCookie("TIMER_STATUS", "IDLE");
+    }
+
     $.get("timerbar.html", function(navbarHtml){
         $("body").append(navbarHtml);
 
@@ -48,7 +55,7 @@ $(document).ready(function(){
         /// Start the timer right away, in case it should already be running
         ///
         if(getCookie("TIMER_STATUS") == "running"){
-            lastLoginRefreshMinutes = -5;
+            //lastLoginRefreshMinutes = -5; //TODO: I don't know why I set this to 5?
             RunProjectTimer();
             $("#favicon").attr("href","clock.png");
         }
@@ -171,11 +178,11 @@ $(document).ready(function(){
         /// Timer End: Rate Your Focus
         ///
         $("#fully-focused").click(function(){
-            AddFocusTime(1); 
+            StoreFocusTime(1); 
             alarmSound.pause();
         });
         $("#less-than-fully-focused").click(function(){
-            AddFocusTime(0.25);
+            StoreFocusTime(0.25);
             alarmSound.pause();
         });
 
@@ -192,14 +199,32 @@ $(document).ready(function(){
 
 
 
-/////                   AddFocusTime
+/////                   StoreFocusTime
 /////
 /////
-function AddFocusTime(focusFactor){
+function StoreFocusTime(focusFactor){
     var effectiveDuration = Math.ceil(TimerDuration() * focusFactor);
     //console.log("Effective duration is: " + effectiveDuration);
+    setCookie("EFFECTIVE_DURATION", effectiveDuration);
+    setCookie("TIMER_STATUS", "completed");
 
-    InsertStudyTime(getCookie("TIMER_PROJECT_ID"), effectiveDuration);
+
+    //TODO: the values are saved, how do I check to make sure the user is logged in?
+    //---- the cookie should work
+    var oauth_token = getCookie("OAUTH_TOKEN");
+
+    if(oauth_token == null){
+        alert("You must sign in to save your study progress.");
+        location.reload();
+    }
+    else{
+        AddFocusTime();
+        alert("Progress saved!");
+    }
+
+}
+function AddFocusTime(){
+    InsertStudyTime(getCookie("TIMER_PROJECT_ID"), getCookie("EFFECTIVE_DURATION"));
 
 
     //NOTE: this is from index.js
@@ -467,15 +492,6 @@ function RunProjectTimer(){
                 }
             }
 
-            //
-            // Expensive way to keep user logged in during a timer
-            //
-            var curMinutes = new Date().getMinutes();//TODO: lastLoginRefreshMinutes is always negative 5?
-            if(lastLoginRefreshMinutes != curMinutes && Math.abs(lastLoginRefreshMinutes - curMinutes) >= 30){
-                lastLoginRefreshMinutes = curMinutes;
-                gapi.load('client:auth2', initClient);
-                console.log("Refreshing google login now"); 
-            }
 
 
             $("#timer-time").text(FormatTimerTime(remainingTime));
