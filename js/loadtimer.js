@@ -6,9 +6,9 @@ var lastLoginRefreshMinutes;
 
 
 $(document).ready(function(){
+
     if(getCookie("OAUTH_TOKEN") != "" && getCookie("EFFECTIVE_DURATION") != ""){
         alert("Adding time from previous session...");
-        //TODO: add the time here
         AddFocusTime();
     }
 
@@ -214,7 +214,7 @@ function StoreFocusTime(focusFactor){
     var oauth_token = getCookie("OAUTH_TOKEN");
 
     if(oauth_token == ""){
-        alert("You have been signed out :(. You must sign back in to save your progress.");
+        alert("You have been signed out :(\nYou must sign back in to save your progress.");
         location.reload();
     }
     else{

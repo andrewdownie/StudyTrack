@@ -131,3 +131,10 @@ body{
 .text-red{
     color:red;
 }
+
+.project-name,
+.time-studied,
+.min-time,
+.ideal-time{
+    line-height: 2;
+}
