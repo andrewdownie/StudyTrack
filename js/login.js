@@ -1,17 +1,12 @@
 $(document).ready(function(){
     gapi.load('client:auth2', initClient);
-    /*
-    $("#login").click(function(){
-        //somehow I need to call window.open here, and then pass the google popup into that?
-        //window.open("", "");
-        //window.setTimeout(gapi.auth.init,1); 
-        //gapi.auth2.getAuthInstance().signIn();
+    var project_name = getCookie("TIMER_PROJECT_NAME");
+    var duration = getCookie("EFFECTIVE_DURATION");
 
-        // v This is what I had before v
-        gapi.load('client:auth2', initClient);
+    if(project_name != "" && duration != ""){
+        $("#unsaved-progress").html("<br>Unsaved progress on project: " + project_name + ", of: " + (parseInt(duration) / 1000) + " seconds.");
+    }
 
-    });
-    */
 });
 
 function LoginPopup(){

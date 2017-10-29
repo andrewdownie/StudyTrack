@@ -126,6 +126,9 @@ function SignInWrapper(){
         var oauth_expireTime = isSignedIn.Zi.expires_at
         console.log("new expirary time is: " + oauth_expireTime);
 
+        //var test_expire_time = oauth_expireTime - (59*60*1000);
+        //alert(test_expire_time);
+
         setCookieEpoch(OAUTH_TOKEN, isSignedIn.Zi.access_token, oauth_expireTime);
         console.log("Login expires: " + oauth_expireTime);
         var oauthCookie = getCookie(OAUTH_TOKEN);

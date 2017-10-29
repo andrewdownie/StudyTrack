@@ -6,10 +6,10 @@ var lastLoginRefreshMinutes;
 
 
 $(document).ready(function(){
-    if(getCookie("TIMER_STATUS") == "completed"){
+    if(getCookie("OAUTH_TOKEN") != "" && getCookie("EFFECTIVE_DURATION") != ""){
+        alert("Adding time from previous session...");
         //TODO: add the time here
         AddFocusTime();
-        setCookie("TIMER_STATUS", "IDLE");
     }
 
     $.get("timerbar.html", function(navbarHtml){
@@ -206,20 +206,20 @@ function StoreFocusTime(focusFactor){
     var effectiveDuration = Math.ceil(TimerDuration() * focusFactor);
     //console.log("Effective duration is: " + effectiveDuration);
     setCookie("EFFECTIVE_DURATION", effectiveDuration);
-    setCookie("TIMER_STATUS", "completed");
+    setCookie("TIMER_STATUS", "IDLE");
 
 
     //TODO: the values are saved, how do I check to make sure the user is logged in?
     //---- the cookie should work
     var oauth_token = getCookie("OAUTH_TOKEN");
 
-    if(oauth_token == null){
-        alert("You must sign in to save your study progress.");
+    if(oauth_token == ""){
+        alert("You have been signed out :(. You must sign back in to save your progress.");
         location.reload();
     }
     else{
         AddFocusTime();
-        alert("Progress saved!");
+        LoadIndexTable();
     }
 
 }
@@ -228,10 +228,12 @@ function AddFocusTime(){
 
 
     //NOTE: this is from index.js
-    LoadIndexTable();
 
     $("#timer-finished-modal").modal("hide");
     setCookie("TIMER_STATUS", "IDLE");
+    setCookie("EFFECTIVE_DURATION", "");
+    setCookie("TIMER_PROJECT_ID", "");
+    setCookie("TIMER_PROJECT_NAME", "");
     DisplayTimerStatus();
 }
 

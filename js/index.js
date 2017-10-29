@@ -6,6 +6,7 @@ $(document).ready(function(){
 });
 
 function CheckCookieStatus(){
+
     //Janky way of making sure the cookie for current USERDATA_SHEET_ID is set before we try to use it.
     //... it's an active loop instead of an event call
     var sheet_id = getCookie("USERDATA_SHEET_ID");
@@ -30,6 +31,7 @@ function CheckCookieStatus(){
 function LoadIndexTable(){
     $(".project-row").remove();
     $(".project-choice").remove();
+
 
     ReadProjectGoals(function(data){
         console.log(data);
