@@ -137,6 +137,8 @@ $(document).ready(function(){
         /// Start Timer
         ///
         $("#start-timer").click(function(){
+            var win = window.open('https://www.brain.fm/app#!/player/35', '_blank');
+            window.focus();
 
             if(ValidTimerInputs() == true){
                 //var time = $("#hours").val() + ":"  + $("#minutes").val().toString().padStart(2, "0") + ":00";
