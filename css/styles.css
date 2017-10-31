@@ -138,3 +138,7 @@ body{
 .ideal-time{
     line-height: 2;
 }
+
+.project-name{
+    cursor: pointer;
+}

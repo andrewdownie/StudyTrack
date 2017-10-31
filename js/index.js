@@ -165,7 +165,7 @@ function CalculateProjectTotals(data){
 function AddProjectRow(projectName, projectID, timeStudied, minRemaining, idealRemaining){
     var rowTemplate =    
     `<tr class="project-row" id="{projectID}">
-        <td><p class="project-name">{projectName}</p></td>
+        <td><a class="project-name"><i class="fa fa-play-circle-o" aria-hidden="true"></i>&nbsp;{projectName}</a></td>
         <td><p class="time-studied">{timeStudied}</p></td>
         <td><p class="min-time">{minRemaining}</p></td>
         <td><p class="ideal-time">{idealRemaining}</p></td>
