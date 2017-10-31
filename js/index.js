@@ -14,26 +14,26 @@ function CheckCookieStatus(){
         setTimeout(CheckCookieStatus, 100);
     }
     else{
-        LoadIndexTable();
+        LoadProjectTable();
     }
 
+    $("#projects-table").on("click", ".project-name", function(){
+        project_id = $(this).parent().parent().attr('id');
+        project_name = $(this).text();
+        InitProjectTimer(project_id, project_name);
+    });
+
 }
-
-
-
-
-
 
 
 /////                   LoadIndexTable
 /////
 /////
-function LoadIndexTable(){
-    $(".project-row").remove();
+function LoadProjectTable(){
     $(".project-choice").remove();
 
-
     ReadProjectGoals(function(data){
+
         console.log(data);
 
         for(var i in data.values){
@@ -71,17 +71,12 @@ function BuildDropItem(projectID, projectName, minimumGoal, idealGoal){
 }
 
 
-
-
-
-
-
-
 /////                   AddProjectRows
 /////
 /////
 function CalculateProjectTotals(data){
     console.log("CalculateProjectTotals--------------");
+    $(".project-row").remove();
 
 
     var projectArray = [];
@@ -153,19 +148,13 @@ function CalculateProjectTotals(data){
 }
 
 
-
-
-
-
-
-
 /////                   AddProjectRow
 /////
 /////
 function AddProjectRow(projectName, projectID, timeStudied, minRemaining, idealRemaining){
     var rowTemplate =    
     `<tr class="project-row" id="{projectID}">
-        <td><a class="project-name"><i class="fa fa-play-circle-o" aria-hidden="true"></i>&nbsp;{projectName}</a></td>
+        <td><a class="project-name"><i class="fa fa-play-circle-o" aria-hidden="true">&nbsp;</i>{projectName}</a></td>
         <td><p class="time-studied">{timeStudied}</p></td>
         <td><p class="min-time">{minRemaining}</p></td>
         <td><p class="ideal-time">{idealRemaining}</p></td>

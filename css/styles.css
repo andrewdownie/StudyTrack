@@ -65,7 +65,7 @@ body{
 .timer-bar-container{
     border-top: 1px solid #ccc;
     background-color: #eee;
-    min-height: 62px;
+    min-height: 91px;
     position: fixed;
     width: 100%;
     bottom: 0;
@@ -89,7 +89,7 @@ body{
     margin-bottom: 8px;
 }
 
-#set-stop-timer{
+#end-timer{
     margin-left: 8px;
     margin-right: 8px;
     margin-bottom: 8px;
@@ -98,6 +98,7 @@ body{
 #timer-time{
     margin: 0;
     margin-top: 4px;
+    margin-left: 5px;
 }
 
 .timer-time-wrapper{
@@ -141,4 +142,13 @@ body{
 
 .project-name{
     cursor: pointer;
+}
+
+.project-in-progress{
+    cursor: default;
+    color: black;
+}
+.project-in-progress:hover{
+    text-decoration: none;
+    color: black;
 }

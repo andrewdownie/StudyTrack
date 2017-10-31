@@ -1,5 +1,5 @@
 <!-- Timer Bar -->
-<div class="timer-bar-container container-flex">
+<div style="display:none;" class="timer-bar-container container-flex">
     <div class="timer-bar">
         <div class="row">
             <div class="col-xs-12">
@@ -7,10 +7,10 @@
             </div>
         </div>
 
-        <button id="set-stop-timer" class="btn btn-primary btn-lg pull-left">Set Timer</button>
+        <button id="end-timer" class="btn btn-primary btn-lg pull-left">End Timer</button>
     
         <div class="pull-left text-left" class="timer-time-wrapper">
-            <h1 id="timer-time">00:00:00</h1>
+            <h1 id="timer-time">0:00</h1>
         </div>
 
 
@@ -103,7 +103,7 @@
         <div class="modal-dialog modal-md">
             <div class="modal-content">
                 <div class="modal-header">
-                        <h3 class="close" id="end-timer-time">0:00</h3>
+                        <h3 class="close" id="confirm-end-time">0:00</h3><!-- I forget what the ID was for this button -->
                         <h4 class="modal-title">Timer Complete</h4>
                         <h5 class="modal-title"><small>Rate Your Focus</small></h5>
                 </div>
