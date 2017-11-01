@@ -1,4 +1,9 @@
 $(document).ready(function(){
+    if(getCookie("OAUTH_TOKEN") != ""){
+        Redirect("index.html");
+    }
+
+
     gapi.load('client:auth2', initClient);
     var project_name = getCookie("TIMER_PROJECT_NAME");
     var duration = getCookie("EFFECTIVE_DURATION");
