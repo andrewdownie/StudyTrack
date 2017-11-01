@@ -5,6 +5,10 @@ $(document).ready(function(){
     CheckCookieStatus();
 });
 
+
+/////                   CheckCookieStatus
+/////
+/////
 function CheckCookieStatus(){
 
     //Janky way of making sure the cookie for current USERDATA_SHEET_ID is set before we try to use it.
@@ -49,12 +53,6 @@ function LoadProjectTable(){
 
     });
 }
-
-
-
-
-
-
 
 
 /////                   BuildDropItem
@@ -169,12 +167,3 @@ function AddProjectRow(projectName, projectID, timeStudied, minRemaining, idealR
 
     $("#projects-table").append(row);
 }
-
-
-
-
-
-
-
-
-

@@ -27,7 +27,7 @@
 
 
 
-<!-- Start Timer Modal -->
+<!-- Start Timer Modal replace the storage of project info from here -->
     <div class="modal fade" id="set-timer-modal" role="dialog">
         <div class="modal-dialog modal-md">
             <div class="modal-content">
@@ -93,57 +93,23 @@
 
 
 
-
-
-
-
-
-<!-- Timer Finished Modal -->
-    <div class="modal fade" id="timer-finished-modal" role="dialog" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog modal-md">
-            <div class="modal-content">
-                <div class="modal-header">
-                        <h3 class="close" id="confirm-end-time">0:00</h3><!-- I forget what the ID was for this button -->
-                        <h4 class="modal-title">Timer Complete</h4>
-                        <h5 class="modal-title"><small>Rate Your Focus</small></h5>
-                </div>
-
-                <div class="modal-body">
-                    <div class="row">
-                        <button type="button" id="fully-focused" class="btn btn-success btn-rate-focus" id="start-timer">Fully Focused</button>
-                    </div>
-
-                    <div class="row">
-                        <button type="button" id="less-than-fully-focused" class="btn btn-warning btn-rate-focus">Less than Fully Focused</button>
-                    </div>
-
-                    <div class="row">
-                        <button type="button" id="not-focused" class="btn btn-danger btn-rate-focus">Not Focused</button>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </div>
-
-<!-- Canel Timer Modal -->
-    <div class="modal fade" id="stop-timer-modal" role="dialog">
+    <div class="modal fade" id="end-timer-modal" role="dialog">
         <div class="modal-dialog modal-md">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Confirm Stopping the Timer</h4>
+                    <h4 class="modal-title">Confirm Ending the Timer</h4>
                 </div>
 
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-xs-12 text-left">
-                            WARNING: If you cancel this timer, you will lose all timer progress!
+                            WARNING: you have studied for less than 10 minutes, if you end the timer now, zero time will recorded.
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-xs-12 text-right">
-                            <button type="button" class="btn btn-danger" id="stop-timer" data-dismiss="modal">Stop Timer</button>
+                            <button type="button" class="btn btn-danger" id="confirm-end-timer" data-dismiss="modal">End Timer</button>
                         </div>
                     </div>
                 </div>

@@ -61,6 +61,11 @@ $(document).ready(function(){
             StartProjectTimer();
         }
 
+
+        $("#confirm-end-timer").click(function(){
+            EndTimer();
+        });
+
     });
 
 });
@@ -70,15 +75,18 @@ $(document).ready(function(){
 /////
 /////
 function StoreFocusTime(focusFactor){
-    var effectiveDuration = Math.ceil(TimePassed() * focusFactor);
+    var timePassed = TimePassed();
+
+    if(timePassed < 600000){
+        $("#end-timer-modal").modal("show");
+        return;
+    }
+
+
+    var effectiveDuration = Math.ceil(timePassed * focusFactor);
     setCookie("EFFECTIVE_DURATION", effectiveDuration);
-    setCookie("TIMER_STATUS", "IDLE");
 
-    $(".fa-play-circle-o").show();
-    $(".timer-bar-container").hide();
-    $("#favicon").attr("href","favicon.png");
-    $(".project-name").removeClass("project-in-progress");
-
+    EndTimer();
 
     var oauth_token = getCookie("OAUTH_TOKEN");
 
@@ -213,4 +221,12 @@ function RunProjectTimer(){
             $("#favicon").attr("href","favicon.png");
         }
     }, 1000);
+}
+
+function EndTimer(){
+    setCookie("TIMER_STATUS", "IDLE");
+    $(".fa-play-circle-o").show();
+    $(".timer-bar-container").hide();
+    $("#favicon").attr("href","favicon.png");
+    $(".project-name").removeClass("project-in-progress");
 }
