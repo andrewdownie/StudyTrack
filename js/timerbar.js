@@ -50,7 +50,15 @@ $(document).ready(function(){
         });
 
         $("#end-timer").click(function(){
-            StoreFocusTime(1);
+            var timePassed = TimePassed();
+
+            if(timePassed < 600000){
+                $("#end-timer-modal").modal("show");
+                return;
+            }
+            else{
+                StoreFocusTime(1);
+            }
         });
 
 
@@ -76,12 +84,6 @@ $(document).ready(function(){
 /////
 function StoreFocusTime(focusFactor){
     var timePassed = TimePassed();
-
-    if(timePassed < 600000){
-        $("#end-timer-modal").modal("show");
-        return;
-    }
-
 
     var effectiveDuration = Math.ceil(timePassed * focusFactor);
     setCookie("EFFECTIVE_DURATION", effectiveDuration);
@@ -229,4 +231,7 @@ function EndTimer(){
     $(".timer-bar-container").hide();
     $("#favicon").attr("href","favicon.png");
     $(".project-name").removeClass("project-in-progress");
+    if(tickSound30 != null){
+        tickSound30.pause();
+    }
 }
