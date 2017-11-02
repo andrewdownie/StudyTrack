@@ -181,7 +181,7 @@ function FormatTimerTime(remainingTime){
 /////
 function InitProjectTimer(project_id, project_name){
     if(getCookie("TIMER_STATUS") != "running"){
-        var win = window.open('https://www.brain.fm/app#!/player/35', '_blank');
+        //var win = window.open('https://www.brain.fm/app#!/player/35', '_blank');
         timePassedMS = 0;
 
         setCookie("TIMER_STATUS", "running");
