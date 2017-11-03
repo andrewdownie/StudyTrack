@@ -3,6 +3,13 @@
 /////
 $(document).ready(function(){
     CheckCookieStatus();
+
+
+    $('#weekly-daily').change(function() {
+        var study_data = getCookie("STUDY_DATA");
+        console.log(study_data);
+        CalculateProjectTotals(study_data);
+    });
 });
 
 
@@ -11,7 +18,7 @@ $(document).ready(function(){
 /////
 function CheckCookieStatus(){
 
-    //Janky way of making sure the cookie for current USERDATA_SHEET_ID is set before we try to use it.
+    //Simple way of making sure the cookie for current USERDATA_SHEET_ID is set before we try to use it.
     //... it's an active loop instead of an event call
     var sheet_id = getCookie("USERDATA_SHEET_ID");
     if(sheet_id == ""){
@@ -88,16 +95,30 @@ function CalculateProjectTotals(data){
         projectArray[currentProjectNum] = new Object();
         projectArray[currentProjectNum].name = $(this).text();
         projectArray[currentProjectNum].id = this.id;
-        projectArray[currentProjectNum].minimumGoal = $(this).attr("minimumGoal"); 
-        projectArray[currentProjectNum].idealGoal = $(this).attr("idealGoal"); 
 
 
 
         projectArray[currentProjectNum].timeStudied = 0;
 
-        for(var i in data.values){
-            if(data.values[i][0] == this.id){
-                projectArray[currentProjectNum].timeStudied += parseInt(data.values[i][1]);
+        if($("#weekly-daily").is(':checked') == true){
+            projectArray[currentProjectNum].minimumGoal = $(this).attr("minimumGoal"); 
+            projectArray[currentProjectNum].idealGoal = $(this).attr("idealGoal"); 
+
+            for(var i in data.values){
+                if(data.values[i][0] == this.id){
+                    projectArray[currentProjectNum].timeStudied += parseInt(data.values[i][1]);
+                }
+            }
+        }
+        else{
+            projectArray[currentProjectNum].minimumGoal = $(this).attr("minimumGoal") / 7;
+            projectArray[currentProjectNum].idealGoal = $(this).attr("idealGoal") / 7; 
+
+            var dayOfYear = DayOfYear();
+            for(var i in data.values){
+                if(data.values[i][0] == this.id && data.values[i][2] == dayOfYear){
+                    projectArray[currentProjectNum].timeStudied += parseInt(data.values[i][1]);
+                }
             }
         }
 

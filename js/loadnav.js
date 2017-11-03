@@ -474,7 +474,7 @@ function InsertStudyTime(projectID, duration, dayOfYear){
 /////
 function ReadStudyTime(callback){
     var access_token = getCookie(OAUTH_TOKEN);
-    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + getCookie(USERDATA_SHEET_ID) + "/values/" + SheetName() + "!G2:H?access_token=" + access_token;
+    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + getCookie(USERDATA_SHEET_ID) + "/values/" + SheetName() + "!G2:I?access_token=" + access_token;
     console.log("the url is: " + url);
 
 
@@ -488,6 +488,7 @@ function ReadStudyTime(callback){
             console.log("Read study time success");
             console.log(data);
             callback(data);
+            setCookie("STUDY_DATA", data)
         },
         error: function(data){
             console.log("Read study time failure");
@@ -600,7 +601,6 @@ function DayOfYear(){
     var diff = (now - start) + ((start.getTimezoneOffset() - now.getTimezoneOffset()) * 60 * 1000);
     var oneDay = 1000 * 60 * 60 * 24;
     var day = Math.floor(diff / oneDay);
-    alert("day is: " + day);
     return day;
 }
 

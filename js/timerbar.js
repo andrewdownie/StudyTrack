@@ -104,7 +104,6 @@ function StoreFocusTime(focusFactor){
 }
 function AddFocusTime(){
     //NOTE: this is from loadnav.js
-    alert('meow meow')
     InsertStudyTime(getCookie("TIMER_PROJECT_ID"), getCookie("EFFECTIVE_DURATION"), DayOfYear());
 
     $("#timer-finished-modal").modal("hide");
