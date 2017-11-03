@@ -128,6 +128,11 @@ function CalculateProjectTotals(data){
     console.log("Time spent on each project is:");
     console.log(projectArray);
 
+    if(projectArray.length == 0){
+        //todo: add message
+        $("#projects-table").after("No projects found...");
+    }
+
 
     for(var i in projectArray){
         var projectID = projectArray[i].id;
