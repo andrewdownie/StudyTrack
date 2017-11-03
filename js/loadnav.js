@@ -13,11 +13,6 @@ var CLIENT_ID = encodeURI('794809467159-f7ngrrspdm6vkma7b6e898d7et7j4p1u.apps.go
 var SCOPE = encodeURI('https://www.googleapis.com/auth/drive.file');
 var DISCOVERY_DOC = encodeURI('https://www.googleapis.com/discovery/v1/apis/drive/v3/rest');
 
-
-
-
-
-
 /////                   Variables
 /////
 /////
@@ -28,11 +23,6 @@ var USERDATA_SHEET_ID = "USERDATA_SHEET_ID"; // Name given to the users data she
 var GoogleAuth; // Google Auth object.
 var isAuthorized = false;
 var currentApiRequest = false;
-
-
-
-
-
 
 /////                   Document Ready
 /////   
@@ -85,12 +75,6 @@ $(document).ready(function(){
 
 });
 
-
-
-
-
-
-
 /////                   Setup GoogleAuth object
 /////                           Handles OAuth and signing the user in
 /////
@@ -110,12 +94,6 @@ function initClient() {
     });
 
 }
-
-
-
-
-
-
 
 /////                   Sign in wrapper
 /////                           Attempts to sign the user in, and then checks (in a sketchy manner) that the user successfully signed in.
@@ -144,13 +122,6 @@ function SignInWrapper(){
 
     });
 }
-
-
-
-
-
-
-
 
 /////                   Check SS 
 /////                           Checks whether the user data spreadsheet already exists
@@ -208,13 +179,6 @@ function CheckForSS(){
 
 }
 
-
-
-
-
-
-
-
 /////                   Create SS
 /////                           Creates the user data spreadsheet
 /////
@@ -248,13 +212,6 @@ function CreateSS(name){
     });
 }
 
-
-
-
-
-
-
-
 /////                   Insert Project Goals
 /////                           Insert a new row into columns A, B, C, D and E
 /////
@@ -270,9 +227,10 @@ function InsertProjectGoals(projectName, minimumGoal, idealGoal, deleted, callba
     } 
     `;
     
-    var projectID = (Math.random()*1e32).toString(36);
+    var projectID = (Math.random()*1e16).toString(20);
     projectID = projectID.replace("(", "");
     projectID = projectID.replace(")", "");
+    projectID = projectID.replace(".", "");
     console.log("Project ID is: " + projectID);
 
     ajax_data = ajax_data.replace("{projectID}", projectID);
@@ -301,13 +259,6 @@ function InsertProjectGoals(projectName, minimumGoal, idealGoal, deleted, callba
         },
     });
 }
-
-
-
-
-
-
-
 
 /////                   Insert Last Weeks Project Goals
 /////                           Insert non-deleted rows into columns A, B, C, D and E
@@ -387,13 +338,6 @@ function InsertLastWeeksProjectGoals(ajaxData){
     });
 }
 
-
-
-
-
-
-
-
 /////                   Insert Project Goals Header
 /////                           Insert the header row into columns A, B, C, D and E
 /////
@@ -429,13 +373,6 @@ function InsertProjectGoalsHeader(){
     });
 }
 
-
-
-
-
-
-
-
 /////                   ReadProjectGoals
 /////
 /////
@@ -469,13 +406,6 @@ function ReadProjectGoals(callback){
     });
 }
 
-
-
-
-
-
-
-
 /////                   ReadLastWeeksProjectGoals
 /////
 /////
@@ -503,28 +433,29 @@ function ReadLastWeeksProjectGoals(insertionCallback){
     });
 }
 
-
-
-
-
-
-
-
 /////                   Insert Study Time
 /////                           Inserts a new row into this weeks work sheet in columns G and H
 /////
 function InsertStudyTime(projectID, duration){
-    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + getCookie(USERDATA_SHEET_ID) + "/values/" + SheetName() + "!G1:H1:append?valueInputOption=RAW&access_token=" + getCookie(OAUTH_TOKEN);
+    InsertStudyTime(projectID, duration, DayOfYear());
+}
+
+/////                   Insert Study Time
+/////                           Inserts a new row into this weeks work sheet in columns G, H and I
+/////
+function InsertStudyTime(projectID, duration, dayOfYear){
+    var url = "https://sheets.googleapis.com/v4/spreadsheets/" + getCookie(USERDATA_SHEET_ID) + "/values/" + SheetName() + "!G1:I1:append?valueInputOption=RAW&access_token=" + getCookie(OAUTH_TOKEN);
 
     var ajax_data = 
     `
     {
-        "values": [["{projectID}", "{duration}"]]
+        "values": [["{projectID}", "{duration}", "{dayOfYear}"]]
     } 
     `;
 
     ajax_data = ajax_data.replace("{projectID}", projectID);
     ajax_data = ajax_data.replace("{duration}", duration);
+    ajax_data = ajax_data.replace("{dayOfYear}", dayOfYear);
 
 
     // Execute the API request.
@@ -535,22 +466,15 @@ function InsertStudyTime(projectID, duration){
         type: 'POST',
         url: url, 
         success: function(data){
-            console.log("Insert row into sheet success");
+            console.log("Insert study time into sheet success");
             console.log(data);
         },
         error: function(data){
-            console.log("Insert row into sheet failure");
+            console.log("Insert study time into sheet failure");
             console.log(data);
         },
     });
 }
-
-
-
-
-
-
-
 
 /////                   ReadStudyTime
 /////
@@ -579,13 +503,6 @@ function ReadStudyTime(callback){
         },
     });
 }
-
-
-
-
-
-
-
 
 /////                   List Sheets
 /////                           List all the work sheets in the user data spreadsheet
@@ -633,13 +550,6 @@ function ListSheets(){
 
 }
 
-
-
-
-
-
-
-
 /////                   Create Sheet 
 /////                           Create this weeks work sheet in the user data spreadsheet
 /////
@@ -656,7 +566,7 @@ function CreateSheet(){
                       "sheetType": "GRID",
                       "gridProperties": {
                         "rowCount": 50,
-                        "columnCount": 8 
+                        "columnCount": 9 
                       }
                     }
                 }
@@ -677,7 +587,7 @@ function CreateSheet(){
         url: url, 
         success: function(data){
             console.log("Create work sheet success");
-            InsertStudyTime("Project ID", "Study Duration (H:M:S)");
+            InsertStudyTime("Project ID", "Study Duration", "Day of year");
             InsertProjectGoalsHeader();
         },
         error: function(data){
@@ -687,12 +597,31 @@ function CreateSheet(){
     });
 }
 
+/////                   Day of year
+/////
+/////
+function DayOfYear(){
+    //https://stackoverflow.com/questions/8619879/javascript-calculate-the-day-of-the-year-1-366
+    var now = new Date();
+    var start = new Date(now.getFullYear(), 0, 0);
+    var diff = (now - start) + ((start.getTimezoneOffset() - now.getTimezoneOffset()) * 60 * 1000);
+    var oneDay = 1000 * 60 * 60 * 24;
+    var day = Math.floor(diff / oneDay);
+    return day;
+}
 
+/////                   Week of year
+/////
+/////
+function WeekOfYear(){
+    //var d = new Date(Date.UTC(this.getFullYear(), this.getMonth(), this.getDate()));
+    var d = new Date();
 
-
-
-
-
+    var dayNum = d.getUTCDay() || 7;
+    d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+    var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+    return Math.ceil((((d - yearStart) / 86400000) + 1)/7)
+}
 
 /////                   LastSunday
 /////                       Returns the day of the month for the most recent sunday 
@@ -703,13 +632,6 @@ function LastSunday(){
     return d.getDate();
 }
 
-
-
-
-
-
-
-
 /////                   LastSunday
 /////                           Returns the sunday previous to last sunday
 /////
@@ -719,42 +641,23 @@ function LastLastSunday(){
     return d.getDate();
 }
 
-
-
-
-
-
-
-
 /////                   LastWeeksSheetName
 /////                           Generate last weeks sheet name
 /////
 function LastWeeksSheetName(){
     var d = new Date();
-    return d.getFullYear().toString() + "-" + (d.getMonth() + 1).toString().padStart(2, '0') + "-" + LastLastSunday();
+    //return d.getFullYear().toString() + "-" + (d.getMonth() + 1).toString().padStart(2, '0') + "-" + LastLastSunday();
+    return d.getFullYear().toString().substr(-2) + (WeekOfYear() - 1);
 }
-
-
-
-
-
-
-
 
 /////                   Sheet Name
 /////                           Generate the name that this weeks sheet will be given
 /////
 function SheetName(){
     var d = new Date();
-    return d.getFullYear().toString() + "-" + (d.getMonth() + 1).toString().padStart(2, '0') + "-" + LastSunday();
+    //return d.getFullYear().toString() + "-" + (d.getMonth() + 1).toString().padStart(2, '0') + "-" + LastSunday();
+    return d.getFullYear().toString().substr(-2) + WeekOfYear();
 }
-
-
-
-
-
-
-
 
 /////                   UpdateProjectGoal
 /////
@@ -808,13 +711,6 @@ function UpdateProjectGoal(projectID, newName, newMinTime, newIdealTime, newDele
 
 }
 
-
-
-
-
-
-
-
 /////                   BuildRedirectString
 /////
 /////
@@ -832,26 +728,12 @@ function BuildRedirectString(urlEnd){
     return pathRebuilt;
 }
 
-
-
-
-
-
-
-
 /////                   Redirect
 /////                           : Redirects by changing the last part of the current url
 /////
 function Redirect(urlEnd){
     window.location.href = BuildRedirectString(urlEnd);
 }
-
-
-
-
-
-
-
 
 /////                   CheckPage
 /////                           : gets the last part of the current url, and checks the passed in string to see if they are the same.
@@ -868,13 +750,6 @@ function CheckUrlEnd(checkUrl){
     return false;
 }
 
-
-
-
-
-
-
-
 /////                   Set Active Link
 /////   
 /////
@@ -887,13 +762,6 @@ function SetActiveLink(){
     $("#" + activeLinkID).addClass("active");
 }
 
-
-
-
-
-
-
-
 /////                   ShowMessageModal
 /////
 /////
@@ -903,26 +771,12 @@ function ShowMessageModal(modalTitle, modalMessage){
     $("#message-modal").modal("show");
 }
 
-
-
-
-
-
-
-
 /////                   HideMessageModal
 /////
 /////
 function HideMessageModal(){
     $("#message-modal").modal("hide");
 }
-
-
-
-
-
-
-
 
 /////                   loadPageVar
 /////
