@@ -52,7 +52,7 @@ $(document).ready(function(){
         $("#end-timer").click(function(){
             var timePassed = TimePassed();
 
-            if(timePassed < 600000){
+            if(timePassed > 600000){
                 $("#end-timer-modal").modal("show");
                 return;
             }
@@ -104,7 +104,8 @@ function StoreFocusTime(focusFactor){
 }
 function AddFocusTime(){
     //NOTE: this is from loadnav.js
-    InsertStudyTime(getCookie("TIMER_PROJECT_ID"), getCookie("EFFECTIVE_DURATION"));
+    alert('meow meow')
+    InsertStudyTime(getCookie("TIMER_PROJECT_ID"), getCookie("EFFECTIVE_DURATION"), DayOfYear());
 
     $("#timer-finished-modal").modal("hide");
     setCookie("TIMER_STATUS", "IDLE");

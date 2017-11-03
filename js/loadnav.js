@@ -434,13 +434,6 @@ function ReadLastWeeksProjectGoals(insertionCallback){
 }
 
 /////                   Insert Study Time
-/////                           Inserts a new row into this weeks work sheet in columns G and H
-/////
-function InsertStudyTime(projectID, duration){
-    InsertStudyTime(projectID, duration, DayOfYear());
-}
-
-/////                   Insert Study Time
 /////                           Inserts a new row into this weeks work sheet in columns G, H and I
 /////
 function InsertStudyTime(projectID, duration, dayOfYear){
@@ -607,6 +600,7 @@ function DayOfYear(){
     var diff = (now - start) + ((start.getTimezoneOffset() - now.getTimezoneOffset()) * 60 * 1000);
     var oneDay = 1000 * 60 * 60 * 24;
     var day = Math.floor(diff / oneDay);
+    alert("day is: " + day);
     return day;
 }
 
