@@ -52,7 +52,7 @@ $(document).ready(function(){
         $("#end-timer").click(function(){
             var timePassed = TimePassed();
 
-            if(timePassed > 600000){
+            if(timePassed < 600000){
                 $("#end-timer-modal").modal("show");
                 return;
             }
