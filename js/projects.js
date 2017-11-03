@@ -24,7 +24,7 @@ $(document).ready(function(){
         $("#edit-project-name").val(curName);
         $("#edit-minimum-time").val(curMinTime);
         $("#edit-ideal-time").val(curIdealTime);
-        $("#delete-project").prop('checked', curDeleted);
+        $("#delete-project").prop('checked', curDeleted).change();
 
         $("#edit-project-modal").modal('show');
 
@@ -33,7 +33,7 @@ $(document).ready(function(){
 
 
 
-    $("#delete-project").click(function(){
+    $("#delete-project").change(function(){
         var curName = $("#" + editProjectID + " .project-name").text();
         var curMinTime = parseInt($("#" + editProjectID + " .min-time").text());
         var curIdealTime = parseInt($("#" + editProjectID + " .ideal-time").text());
