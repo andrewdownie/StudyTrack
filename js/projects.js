@@ -32,8 +32,8 @@ $(document).ready(function(){
     });
 
 
-
-    $("#delete-project").change(function(){
+    //TODO: moving this to #update-project
+    /*$("#delete-project").change(function(){
         var curName = $("#" + editProjectID + " .project-name").text();
         var curMinTime = parseInt($("#" + editProjectID + " .min-time").text());
         var curIdealTime = parseInt($("#" + editProjectID + " .ideal-time").text());
@@ -52,7 +52,7 @@ $(document).ready(function(){
         });
 
         $("#edit-project-modal").modal('hide');
-    });
+    });*/
 
 
 
@@ -77,21 +77,6 @@ $(document).ready(function(){
         }
 
 
-        /*var projectAlreadyExists = false; //TODO: not sure how to handle editing projects and preventing projects with the same name, as if you want to save it with the name it started with, it will be considered already existing. Will come back to this later
-        $(".project-name").each(function(){
-            row ++;
-            if(newName == $(this).text()){
-                projectAlreadyExists = true;
-            }
-        });
-
-        if(projectAlreadyExists == true){
-            $("#edit-project-error-message").text("Project with this name already exists.");
-            return;
-        }*/
-
-
-
         if(ValidProjectName(newName) == false){
             $("#edit-project-error-message").text("Project names can only contain letters, number, spaces, underscores and dashes.");
             return;
@@ -105,6 +90,14 @@ $(document).ready(function(){
             $("#" + editProjectID + " .min-time").text(newMinTime);
             $("#" + editProjectID + " .ideal-time").text(newIdealTime);
         });
+
+        if(deleted.toString() == "true"){
+            $("#" + editProjectID).addClass("text-red");
+        }
+        else{
+            $("#" + editProjectID).removeClass("text-red");
+        }
+
         $("#edit-project-modal").modal('hide');
     });
 
