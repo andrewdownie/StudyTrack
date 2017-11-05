@@ -461,6 +461,19 @@ function InsertStudyTime(projectID, duration, dayOfYear){
         success: function(data){
             console.log("Insert study time into sheet success");
             console.log(data);
+
+            //Update the local study data cookie
+            var study_data = getCookie("STUDY_DATA");
+            if(study_data != ""){
+                for(var i = 0; i < study_data.length; i++){
+                    if(study_data[i][1] == projectID){
+                        study_data[i][2] += duration;
+                        //TODO: do I need to call update on the table?
+                        break;
+                    }
+                }
+            }
+
         },
         error: function(data){
             console.log("Insert study time into sheet failure");
@@ -488,7 +501,7 @@ function ReadStudyTime(callback){
             console.log("Read study time success");
             console.log(data);
             callback(data);
-            setCookie("STUDY_DATA", data)
+            setCookie("STUDY_DATA", JSON.stringify(data))
         },
         error: function(data){
             console.log("Read study time failure");

@@ -6,8 +6,9 @@ $(document).ready(function(){
 
 
     $('#weekly-daily').change(function() {
-        var study_data = getCookie("STUDY_DATA");
-        console.log(study_data);
+        var study_data = JSON.parse(getCookie("STUDY_DATA"));
+        //console.log("STUDY DATA IS");
+        //console.log(study_data);
         CalculateProjectTotals(study_data);
     });
 });
@@ -81,6 +82,7 @@ function BuildDropItem(projectID, projectName, minimumGoal, idealGoal){
 /////
 function CalculateProjectTotals(data){
     console.log("CalculateProjectTotals--------------");
+    //console.log(data);
     $(".project-row").remove();
 
 
@@ -129,7 +131,6 @@ function CalculateProjectTotals(data){
     console.log(projectArray);
 
     if(projectArray.length == 0){
-        //todo: add message
         $("#projects-table").after("No projects found...");
     }
 
