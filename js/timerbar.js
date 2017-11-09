@@ -1,5 +1,5 @@
 var tickSound30;
-var alarmSound;
+//var alarmSound;
 
 var timePassedMS;
 
@@ -32,6 +32,7 @@ $(document).ready(function(){
         $("#timer-volume-slider").val(vol);
         tickSound30.volume = vol;
 
+        /*
         if(alarmSound == null){
             alarmSound = document.getElementById("audio-alarmSound");
             alarmSound.addEventListener('ended', function() {
@@ -39,6 +40,7 @@ $(document).ready(function(){
                 this.play();
             }, false);
         }
+        */
 
 
         ///

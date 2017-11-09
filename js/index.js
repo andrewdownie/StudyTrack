@@ -117,7 +117,8 @@ function CalculateProjectTotals(data, dataDisplayOption){
 
 
 
-        projectArray[currentProjectNum].timeStudied = 0;
+        projectArray[currentProjectNum].totalTimeStudied = 0;
+        projectArray[currentProjectNum].dailyTimeStudied = 0;
 
         if(dataDisplayOption == "weekly"){
             $("#displayOptionName").text("Weekly");
@@ -128,7 +129,7 @@ function CalculateProjectTotals(data, dataDisplayOption){
 
             for(var i in data.values){
                 if(data.values[i][0] == this.id){
-                    projectArray[currentProjectNum].timeStudied += parseInt(data.values[i][1]);
+                    projectArray[currentProjectNum].totalTimeStudied += parseInt(data.values[i][1]);
                 }
             }
 
@@ -143,7 +144,7 @@ function CalculateProjectTotals(data, dataDisplayOption){
             var dayOfYear = DayOfYear();
             for(var i in data.values){
                 if(data.values[i][0] == this.id && data.values[i][2] == dayOfYear){
-                    projectArray[currentProjectNum].timeStudied += parseInt(data.values[i][1]);
+                    projectArray[currentProjectNum].dailyTimeStudied += parseInt(data.values[i][1]);
                 }
             }
         }
@@ -151,15 +152,18 @@ function CalculateProjectTotals(data, dataDisplayOption){
             $("#displayOptionName").text("Catch up");
             $("#displayOptionDescription").attr("data-content", "Shows amount of study time put in today. Shows the amount of time needed to put in each day given how many days have already passed in the week.");
 
-            var days_remaining = 7 - new Date().getDay() + 1;
 
-            projectArray[currentProjectNum].minimumGoal = $(this).attr("minimumGoal") / days_remaining;
-            projectArray[currentProjectNum].idealGoal = $(this).attr("idealGoal") / days_remaining; 
+            projectArray[currentProjectNum].minimumGoal = $(this).attr("minimumGoal");
+            projectArray[currentProjectNum].idealGoal = $(this).attr("idealGoal"); 
 
-            var dayOfYear = DayOfYear();
             for(var i in data.values){
-                if(data.values[i][0] == this.id && data.values[i][2] == dayOfYear){
-                    projectArray[currentProjectNum].timeStudied += parseInt(data.values[i][1]);
+                if(data.values[i][0] == this.id){
+                    projectArray[currentProjectNum].totalTimeStudied += parseInt(data.values[i][1]);
+                    var dayOfYear = DayOfYear();
+
+                    if(data.values[i][2] == dayOfYear){
+                        projectArray[currentProjectNum].dailyTimeStudied += parseInt(data.values[i][1]);
+                    }
                 }
             }
         }
@@ -178,16 +182,49 @@ function CalculateProjectTotals(data, dataDisplayOption){
     for(var i in projectArray){
         var projectID = projectArray[i].id;
         var projectName = projectArray[i].name;
-        var msStudied = projectArray[i].timeStudied;
+        var msTotalStudied = projectArray[i].totalTimeStudied;
+        var msDailyStudied = projectArray[i].dailyTimeStudied;
 
 
         var minimumGoal = projectArray[i].minimumGoal;
         var idealGoal = projectArray[i].idealGoal;
         
 
-        minRemaining = (minimumGoal * 3600000) - msStudied;
-        idealRemaining = (idealGoal * 3600000) - msStudied;
 
+
+
+
+
+        var timeStudied; 
+        if(dataDisplayOption == "daily"){
+            timeStudied = moment.duration(msDailyStudied);
+            minRemaining = (minimumGoal * 3600000) - msDailyStudied;
+            idealRemaining = (idealGoal * 3600000) - msDailyStudied;
+        }
+        else if(dataDisplayOption == "weekly"){
+            timeStudied = moment.duration(msTotalStudied);
+            minRemaining = (minimumGoal * 3600000) - msTotalStudied;
+            idealRemaining = (idealGoal * 3600000) - msTotalStudied;
+        }
+        else if(dataDisplayOption == "catchup"){
+            timeStudied = moment.duration(msDailyStudied);
+
+            var days_remaining = 7 - new Date().getDay() + 1;
+
+            //First we calculate the amount of time that has been studied this week (not including today)
+            //  and subtract it from this weeks goals
+            minRemaining = (minimumGoal * 3600000) - msTotalStudied + msDailyStudied;
+            idealRemaining = (idealGoal * 3600000) - msTotalStudied + msDailyStudied;
+
+            //Then we divide the remaining goal time to study, by the number of days remaining in the week
+            //  To get the amount of time needed to be spent to reach goals by the end of the week
+            minRemaining = minRemaining / days_remaining;
+            idealRemaining = idealRemaining / days_remaining;
+
+            //Then we subtract the amount of time we have spent studying today
+            minRemaining = minRemaining - msDailyStudied;
+            idealRemaining = idealRemaining - msDailyStudied;
+        }
 
         if(minRemaining < 0){
             minRemaining = 0;
@@ -197,10 +234,8 @@ function CalculateProjectTotals(data, dataDisplayOption){
             idealRemaining = 0;
         }
 
-
         var minMoment = moment.duration(minRemaining);  
         var idealMoment = moment.duration(idealRemaining); 
-        var timeStudied = moment.duration(msStudied);
 
         timeStudiedStr = timeStudied.hours().toString().padStart(2, " ") + ":" + timeStudied.minutes().toString().padStart(2, "0"); 
         minStr = minMoment.hours().toString().padStart(2, " ") + ":" + minMoment.minutes().toString().padStart(2, "0");
