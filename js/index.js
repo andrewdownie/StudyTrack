@@ -3,14 +3,31 @@
 /////
 $(document).ready(function(){
     CheckCookieStatus();
+    $('[data-toggle="popover"]').popover();   
 
 
-    $('#weekly-daily').change(function() {
+    /*$('#weekly-daily').change(function() {
         var study_data = JSON.parse(getCookie("STUDY_DATA"));
         //console.log("STUDY DATA IS");
         //console.log(study_data);
         CalculateProjectTotals(study_data);
+    });*/
+
+
+    $("#weekly").click(function(){
+        var study_data = JSON.parse(getCookie("STUDY_DATA"));
+        CalculateProjectTotals(study_data, "weekly");
     });
+    $("#daily").click(function(){
+        var study_data = JSON.parse(getCookie("STUDY_DATA"));
+        CalculateProjectTotals(study_data, "daily");
+    });
+    $("#catchup").click(function(){
+        var study_data = JSON.parse(getCookie("STUDY_DATA"));
+        CalculateProjectTotals(study_data, "catchup");
+    });
+
+
 });
 
 
@@ -80,7 +97,7 @@ function BuildDropItem(projectID, projectName, minimumGoal, idealGoal){
 /////                   AddProjectRows
 /////
 /////
-function CalculateProjectTotals(data){
+function CalculateProjectTotals(data, dataDisplayOption){
     console.log("CalculateProjectTotals--------------");
     //console.log(data);
     $(".project-row").remove();
@@ -102,7 +119,10 @@ function CalculateProjectTotals(data){
 
         projectArray[currentProjectNum].timeStudied = 0;
 
-        if($("#weekly-daily").is(':checked') == true){
+        if(dataDisplayOption == "weekly"){
+            $("#displayOptionName").text("Weekly");
+            $("#displayOptionDescription").attr("data-content", "Shows total amount of study time put in this week. Also shows how much study time is remaining.");
+
             projectArray[currentProjectNum].minimumGoal = $(this).attr("minimumGoal"); 
             projectArray[currentProjectNum].idealGoal = $(this).attr("idealGoal"); 
 
@@ -111,10 +131,30 @@ function CalculateProjectTotals(data){
                     projectArray[currentProjectNum].timeStudied += parseInt(data.values[i][1]);
                 }
             }
+
         }
-        else{
+        else if(dataDisplayOption == "daily"){
+            $("#displayOptionName").text("Daily");
+            $("#displayOptionDescription").attr("data-content", "Shows amount of study time put in today. Shows average amount of time needed to be spent on each project each day in order to reach weekly goal.");
+
             projectArray[currentProjectNum].minimumGoal = $(this).attr("minimumGoal") / 7;
             projectArray[currentProjectNum].idealGoal = $(this).attr("idealGoal") / 7; 
+
+            var dayOfYear = DayOfYear();
+            for(var i in data.values){
+                if(data.values[i][0] == this.id && data.values[i][2] == dayOfYear){
+                    projectArray[currentProjectNum].timeStudied += parseInt(data.values[i][1]);
+                }
+            }
+        }
+        else if(dataDisplayOption == "catchup"){
+            $("#displayOptionName").text("Catch up");
+            $("#displayOptionDescription").attr("data-content", "Shows amount of study time put in today. Shows the amount of time needed to put in each day given how many days have already passed in the week.");
+
+            var days_remaining = 7 - new Date().getDay() + 1;
+
+            projectArray[currentProjectNum].minimumGoal = $(this).attr("minimumGoal") / days_remaining;
+            projectArray[currentProjectNum].idealGoal = $(this).attr("idealGoal") / days_remaining; 
 
             var dayOfYear = DayOfYear();
             for(var i in data.values){

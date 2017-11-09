@@ -76,11 +76,21 @@
 
                 <section class="row">
                     <div class="col-xs-12">
-                        <div class="pull-right">
-                            <br>
-                            <a href="https://www.brain.fm/app#!/player/35" target="_blank">Brain.fm focus</a>
+                        <!--<input type="checkbox" data-width="100px" id="weekly-daily" name="checkbox-weekly-daily" data-onstyle="success" data-off="daily" data-on="weekly" data-toggle="toggle" checked>-->
+                        <div class="btn-group" id="weekly-daily-catchup">
+                            <button id="weekly" class="btn btn-primary">Weekly</button>
+                            <button id="daily" class="btn btn-default">Daily</button>
+                            <button id="catchup" class="btn btn-default">Catch up</button>
                         </div>
-                        <input type="checkbox" data-width="100px" id="weekly-daily" name="checkbox-weekly-daily" data-onstyle="success" data-off="daily" data-on="weekly" data-toggle="toggle" checked>
+                    </div>
+                    <div class="col-xs-12">
+                        <h2>
+                        <a id="displayOptionDescription" href="#" data-toggle="popover" data-content="Loading..." data-trigger="focus">
+                                <i class="fa fa-question-circle" aria-hidden="true"></i>
+                            </a>
+                            <span id="displayOptionName"></span>
+                        </h2>
+
                     </div>
                 </section>
 

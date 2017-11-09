@@ -500,13 +500,13 @@ function ReadStudyTime(callback){
         success: function(data){
             console.log("Read study time success");
             console.log(data);
-            callback(data);
+            callback(data, "weekly");
             setCookie("STUDY_DATA", JSON.stringify(data))
         },
         error: function(data){
             console.log("Read study time failure");
             console.log(data);
-            callback(data);
+            callback(data, "weekly");
         },
     });
 }
